@@ -24,7 +24,7 @@ RUN mkdir -p vector_store
 # Let's copy the ingestion scripts.
 
 # Expose port
-EXPOSE 8000
+EXPOSE 10000
 
-# Run Uvicorn
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run Uvicorn on port 10000 (Render default)
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "10000"]
