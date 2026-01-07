@@ -1,0 +1,8 @@
+__pycache__
+*.pyc
+.env
+venv/
+.git/
+vector_store/
+data/
+frontend/
