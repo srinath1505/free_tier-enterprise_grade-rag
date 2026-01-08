@@ -1,93 +1,153 @@
-# 🚀 Enterprise RAG Platform (Zero-Cost & Secure)
+# 🚀 Enterprise RAG Platform: Zero-Cost & Production-Ready
 
-A production-grade, highly accurate **Retrieval Augmented Generation (RAG)** system designed to run entirely on **free-tier infrastructure** while delivering enterprise features like security, observability, and advanced retrieval techniques.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B.svg)](https://streamlit.io/)
 
-## ✨ Key Features
+### **Democratizing Enterprise-Grade AI**
+Most "Enterprise" RAG solutions require massive cloud budgets. This platform proves that you can deliver **highly accurate, secure, and observable** AI systems using entirely **free-tier infrastructure**. 
 
-### 🧠 Advanced RAG Engine
-*   **Hybrid Search**: Combines **Vector Search** (FAISS) and **Keyword Search** (BM25) using **Weighted Reciprocal Rank Fusion (RRF)**. Tunable `alpha` parameter.
-*   **Query Expansion**: Automatically generates multiple variations of user queries to maximize recall (Multi-Query Retrieval).
-*   **Reranking**: Uses a Cross-Encoder (`ms-marco-TinyBERT-L-2-v2`) to re-score retrieved documents for high precision.
-*   **Zero-Cost LLM**: Powered by **Hugging Face Inference API** (Serverless) using models like `Phi-3` or `Mistral-7B`.
+By orchestrating **Hybrid Search**, **Cross-Encoder Reranking**, and **Zero-Trust Security**, this project bridges the gap between a simple prototype and a production microservice.
 
-### 🛡️ Enterprise Security
-*   **Zero Trust Architecture**: JWT-based Authentication.
-*   **RBAC**: Role-Based Access Control (Admin/User).
-*   **Guardrails**: Input sanitization (PII redaction) and Output validation (Hallucination detection).
+---
 
-### 📊 Observability
-*   **Full Telemetry**: Integrated with **LangSmith** for deep tracing.
-*   **Custom Metrics**: Logs latency, token usage, and retrieval quality (`f1`, `relevance`).
-*   **Alerting**: Automated alerts for high latency or hallucination spikes.
+## 🏗️ Scalability & Vendor-Agnostic Design
 
-### 💻 Modern Frontend
-*   **Streamlit + Shadcn UI**: A stunning, glassmorphism-styled chat interface.
-*   **Interactive Controls**: Adjustable sliders for `Top-K` and `Hybrid Alpha`.
+A core philosophy of this project is **Architectural Flexibility**. While it currently runs on 100% free-tier services to showcase cost-efficiency, the backend is built using a **Decoupled FastAPI Architecture**.
+
+* **Easy Swap-Ability:** Because the logic is modular, you can transition from "Free-Tier" to "Global-Scale" in minutes by simply updating your `.env` config:
+    * **Vector Store:** Swap local **FAISS** for **Pinecone** or **Milvus** for managed, billion-scale vector search.
+    * **LLM Provider:** Move from **Hugging Face Serverless** to **OpenAI (GPT-4o)**, **Anthropic (Claude 3.5)**, or **Azure OpenAI** with zero code changes in the core engine.
+    * **Scalability:** FastAPI’s asynchronous nature allows the platform to handle high concurrency, making it ready to be containerized and deployed on Kubernetes or AWS Lambda.
+
+> **Why this matters:** This project is a proof-of-concept for "Cost-First Development." Build and validate your business logic for $0, then scale to paid enterprise providers only when your traffic justifies the cost.
+
+---
+
+## 🧠 Advanced Retrieval Architecture
+
+Standard RAG often fails due to poor relevance. This platform uses a multi-stage pipeline to ensure the LLM receives the most pertinent context:
+
+* **Hybrid Search (Dense + Sparse):** Combines the semantic power of **FAISS** (Vector) with the keyword precision of **BM25**. 
+* **Weighted RRF (Reciprocal Rank Fusion):** Merges search results using a tunable `alpha` parameter to balance "meaning" vs. "keyword" matching.
+* **Multi-Query Expansion:** Generates multiple variations of the user's prompt to maximize recall.
+* **State-of-the-Art Reranking:** Implements a **Cross-Encoder** (`ms-marco-TinyBERT`) to re-score documents, significantly reducing hallucinations.
+
+---
+
+## 🛡️ Enterprise-Grade Security & Guardrails
+
+* **Zero-Trust Auth:** Secure API access via **JWT (JSON Web Tokens)** and **RBAC (Role-Based Access Control)**.
+* **PII Redaction:** Automated input sanitization ensures sensitive data never hits the LLM provider.
+* **Hallucination Detection:** Output validation layers to ensure factual grounding.
+
+---
+
+## 📊 Observability & Telemetry
+
+Integrated with **LangSmith** for full-stack tracing:
+* **Latency Tracking:** Monitor retrieval vs. generation time.
+* **Cost Analysis:** Token usage logging to project future scale.
+* **Quality Metrics:** Logs F1, Relevancy, and Faithfulness scores.
+
+---
 
 ## 🛠️ Tech Stack
 
-*   **Backend**: FastAPI, Pydantic, Python 3.10
-*   **Frontend**: Streamlit, Streamlit-Shadcn-UI
-*   **Vector DB**: FAISS (Local/Disk-persisted)
-*   **LLM Orchestration**: LangChain, HuggingFace Hub
-*   **Deployment**: Docker (Render), Hugging Face Spaces
+| Layer | Technology | Why? |
+| :--- | :--- | :--- |
+| **Backend** | FastAPI / Pydantic | Async performance and modular "Swap-ready" endpoints. |
+| **Frontend** | Streamlit + Shadcn | Professional "Glassmorphism" UI with low dev overhead. |
+| **Vector Engine**| FAISS | Disk-persisted, high-speed local search (Zero Cost). |
+| **Inference** | Hugging Face Hub | Serverless, high-performance LLMs without API fees. |
 
-## 🚀 Getting Started
+---
+
+## ⚡ Getting Started
+
+Launch your own RAG platform in under 5 minutes.
 
 ### Prerequisites
 *   Python 3.10+
-*   Hugging Face API Token
-*   (Optional) LangSmith API Key
+*   Git
 
-### Local Installation
+### 1. Clone & Setup
+```bash
+git clone https://github.com/srinath1505/free_tier-enterprise_grade-rag.git
+cd free_tier-enterprise_grade-rag
 
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/srinath1505/free_tier-enterprise_grade-rag.git
-    cd free_tier-enterprise_grade-rag
-    ```
+# Create Virtual Environment (Recommended)
+python -m venv venv
+# Windows
+.\venv\Scripts\Activate
+# Linux/Mac
+source venv/bin/activate
 
-2.  **Install Backend Dependencies**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # or venv\Scripts\activate on Windows
-    pip install -r requirements.txt
-    ```
+# Install Dependencies
+pip install -r requirements.txt
+```
 
-3.  **Configure Environment**
-    Copy `.env.example` to `.env` and fill in your keys:
-    ```ini
-    HF_TOKEN=hf_...
-    LLM_PROVIDER=hf
-    ```
+### 2. Configuration
+Copy the example environment file:
+```bash
+cp .env.example .env
+```
+Edit `.env` and add your **Hugging Face Token** (Get one [here](https://huggingface.co/settings/tokens)):
+```ini
+HF_TOKEN=hf_your_token_here
+LLM_PROVIDER=hf
+```
 
-4.  **Run Backend**
-    ```bash
-    uvicorn backend.main:app --reload
-    ```
+### 3. Ingest Your Data
+Place your PDF, DOCX, or TXT files in the `data/` folder.
+```bash
+# Run the ingestion pipeline
+python ingestion/ingest.py
+```
 
-5.  **Run Frontend**
-    ```bash
-    cd frontend
-    pip install -r requirements.txt
-    streamlit run app.py
-    ```
+### 4. Run the Platform
+Open two terminals:
 
-## ☁️ Deployment Guide
+**Terminal 1 (Backend API)**
+```bash
+uvicorn backend.main:app --reload
+```
 
-### 1. Backend (Render)
-1.  Fork/Clone this repo.
-2.  Create a **New Web Service** on [Render](https://render.com/).
-3.  Select your repo.
-4.  **Runtime**: Docker.
-5.  **Environment Variables**: Add `HF_TOKEN`, `LLM_PROVIDER=hf`.
-6.  Deploy! Copy the URL (e.g., `https://my-rag.onrender.com`).
-
-### 2. Frontend (Hugging Face Spaces)
-1.  Create a new **Streamlit Space** on Hugging Face.
-2.  Upload the contents of the `frontend/` folder to the root of the Space.
-3.  Go to **Settings** > **Variables and secrets**.
-4.  Add Secret `BACKEND_URL` = `https://my-rag.onrender.com/api/v1`.
+**Terminal 2 (Frontend UI)**
+```bash
+streamlit run frontend/app.py
+```
+Visit `http://localhost:8501` and start chatting!
 
 ---
-*Built by [Srinath](https://github.com/srinath1505)*
+
+## 🗺️ Roadmap & Future Scope
+
+This project is evolving. Our goal is to match the feature set of high-end enterprise platforms.
+
+* **Evaluation Framework:** Integration of **RAGAS** or **Arize Phoenix** for automated, LLM-assisted quality scoring (Faithfulness, Answer Relevance).
+* **Persistent Memory:** Implementing a **PostgreSQL/Redis** layer for long-term "User Memory" and chat history persistence beyond a single session.
+* **Intelligent Document Parsing:** Moving beyond basic loaders to handle complex PDFs (multi-column text, tables, and images) using **Unstructured.io**.
+* **Advanced Guardrails:** Deep integration with NeMo Guardrails for stricter conversational safety.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1.  Fork the repository
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+---
+
+## 👨‍💻 Built By
+
+**Srinath Selvakumar**  
+*Engineering accessible AI solutions.*
+
+Crafted with intensity and engineered for scale. 🚀

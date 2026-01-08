@@ -153,7 +153,30 @@ if prompt := st.chat_input("What would you like to know?"):
                 }
                 
                 start_time = time.time()
-                response = requests.post(f"{BACKEND_URL}/rag/query", json=payload)
+                
+                # --- Authenticate first (Auto-Login) ---
+                # Ideally this would be a login screen, but for this demo we auto-login as admin
+                auth_data = {
+                    "username": "admin",
+                    "password": "password"
+                }
+                
+                # 1. Get Token
+                token_response = requests.post(f"{BACKEND_URL.replace('/api/v1', '')}/api/v1/token", data=auth_data)
+                
+                if token_response.status_code != 200:
+                     st.error("Authentication Failed. Check backend logs.")
+                     st.stop()
+                     
+                token = token_response.json()["access_token"]
+                headers = {"Authorization": f"Bearer {token}"}
+
+                # 2. Query RAG
+                response = requests.post(
+                    f"{BACKEND_URL}/rag/query", 
+                    json=payload,
+                    headers=headers
+                )
                 elapsed = time.time() - start_time
                 
                 if response.status_code == 200:

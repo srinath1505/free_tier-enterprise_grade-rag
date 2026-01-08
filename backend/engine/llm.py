@@ -67,20 +67,23 @@ class HuggingFaceLLM(LLMProvider):
         self.model = model_id
 
     def generate(self, prompt: str, system_prompt: str = "") -> str:
-        # Construct the prompt structure for Phi-3 / Mistral (Instuct mode)
-        full_prompt = f"<|user|>\n{system_prompt}\n{prompt}<|end|>\n<|assistant|>"
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
         try:
-            # text_generation is the specific task
-            response = self.client.text_generation(
-                prompt=full_prompt,
+            # Use Chat Completion API (Universal for Instruction Models)
+            response = self.client.chat_completion(
+                messages=messages,
                 model=self.model,
-                max_new_tokens=512,
-                temperature=0.3,
-                return_full_text=False
+                max_tokens=512,
+                temperature=0.3
             )
-            return response.strip()
+            return response.choices[0].message.content
         except Exception as e:
-            return f"Error communicating with HF API: {e}"
+            print(f"HF API Error Details: {repr(e)}")
+            return f"Error communicating with HF API: {repr(e)}"
 
     def generate_stream(self, prompt: str, system_prompt: str = "") -> Generator[str, None, None]:
         # HF Inference API streaming is different/limited depending on model support

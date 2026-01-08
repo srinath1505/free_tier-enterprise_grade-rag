@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "phi3:mini"
     
     # Hugging Face (Fallback)
-    HF_INFERENCE_API_URL: str = "microsoft/Phi-3-mini-4k-instruct" # Using Model ID now
+    HF_INFERENCE_API_URL: str = "mistralai/Mistral-7B-Instruct-v0.2"
     HF_TOKEN: str = ""
 
     # Retrieval Settings
