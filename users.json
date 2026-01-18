@@ -1,0 +1,12 @@
+{
+    "admin": {
+        "username": "admin",
+        "role": "admin",
+        "hashed_password": "$pbkdf2-sha256$29000$0lrrPceY8743RohxrjUGQA$Sa/hVz47iAV.OzYjq3EmXrANR9.jF0/7KXfkqmT4qkk"
+    },
+    "guest1": {
+        "username": "guest1",
+        "role": "viewer",
+        "hashed_password": "$pbkdf2-sha256$29000$B4BwDuHcW4uxFqJ0rjXG2A$4YU9uIdZdmbSRrp5ytGI5pplP1H.YouHWymoLOUxgaQ"
+    }
+}

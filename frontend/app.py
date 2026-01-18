@@ -4,218 +4,260 @@ import requests
 import json
 import os
 import time
+import pandas as pd
 
 # Configuration
-# Point to backend (Render URL in prod, localhost in dev)
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
+# Use wide layout
 st.set_page_config(
-    page_title="Enterprise RAG", 
+    page_title="Enterprise RAG Portal", 
     page_icon="⚡", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for Premium Look ---
+# --- Custom CSS ---
 st.markdown("""
 <style>
-    /* Global Gradient Background */
-    .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: #e2e8f0;
-    }
-    
-    /* Smooth Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #0f172a; 
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #334155; 
-        border-radius: 5px;
-    }
-
-    /* Glassmorphism for Containers */
-    .stChatMessage {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        animation: fadeIn 0.5s ease-in-out;
-    }
-    
-    /* Input Box Styling */
-    .stChatInputContainer textarea {
-        background-color: #1e293b !important;
-        color: #f8fafc !important;
-        border: 1px solid #475569 !important;
-        border-radius: 12px !important;
-    }
-    
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Typography */
-    h1, h2, h3 {
-        font-family: 'Inter', sans-serif;
-        letter-spacing: -0.025em;
-    }
-    
-    /* Sidebar Polish */
-    section[data-testid="stSidebar"] {
-        background-color: #0f172a;
-        border-right: 1px solid #334155;
-    }
+    .stApp { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #e2e8f0; }
+    .stChatMessage { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; }
+    .stTextInput input { background-color: #1e293b !important; color: #f8fafc !important; border-radius: 8px !important; }
+    section[data-testid="stSidebar"] { background-color: #0f172a; border-right: 1px solid #334155; }
+    div[data-testid="stExpander"] { background-color: transparent; border: 1px solid #334155; border-radius: 8px; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- Sidebar ---
-with st.sidebar:
-    st.title("⚡ Enterprise RAG")
-    st.caption("v1.0.0 | Powered by Phi-3 & FAISS")
-    
-    st.markdown("---")
-    
-    st.markdown("### ⚙️ Engine Settings")
-    alpha = ui.slider(default_value=[0.5], min_value=0.0, max_value=1.0, step=0.1, label="Hybrid Alpha (Keyword ↔ Semantic)", key="alpha_slider")
-    top_k = ui.slider(default_value=[5], min_value=1, max_value=10, step=1, label="Retrieval Depth (Top-K)", key="top_k_slider")
-    
-    use_expansion = ui.switch(default_checked=True, label="Query Expansion (AI)", key="qe_switch")
-    
-    st.markdown("---")
-    
-    # Session Stats
-    st.markdown("### 📊 Session Stats")
-    if "request_count" not in st.session_state:
-        st.session_state.request_count = 0
-    
-    ui.metric_card(title="Total Queries", content=f"{st.session_state.request_count}", description="In this session", key="stats_card")
-    
-    if st.button("🗑️ Clear History", type="secondary"):
-        st.session_state.messages = []
-        st.rerun()
+# --- Session State ---
+if "token" not in st.session_state: st.session_state.token = None
+if "role" not in st.session_state: st.session_state.role = None
+if "username" not in st.session_state: st.session_state.username = None
+if "messages" not in st.session_state: st.session_state.messages = []
+if "request_count" not in st.session_state: st.session_state.request_count = 0
 
-# --- Main Interface ---
+# --- Authentication Views ---
 
-# Header
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.title("Knowledge Assistant")
-    st.markdown("Ask anything about your enterprise documents. The system uses **Hybrid Search** and **Cross-Encoder Reranking** for maximum accuracy.")
-with col2:
-    # Just a visual spacer or logo could go here
-    pass
-
-# Chat History
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display Chat
-for message in st.session_state.messages:
-    with st.chat_message(message["role"], avatar="🧑‍💻" if message["role"] == "user" else "🤖"):
-        st.markdown(message["content"])
-        if "sources" in message:
-             with st.expander(f"📚 View {len(message['sources'])} Retrieved Sources"):
-                 for idx, source in enumerate(message["sources"]):
-                     ui.card(title=f"Source {idx+1}", content=source.get('content', '')[:300] + "...", description=f"ID: {source.get('id', 'unknown')}", key=f"src_{message.get('timestamp')}_{idx}")
-
-# Input Processing
-if prompt := st.chat_input("What would you like to know?"):
-    # User Message
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="🧑‍💻"):
-        st.markdown(prompt)
-
-    # Assistant Response
-    with st.chat_message("assistant", avatar="🤖"):
-        message_placeholder = st.empty()
+def login_register_view():
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.title("🔐 Enterprise Access")
+        tab1, tab2 = st.tabs(["Login", "Register"])
         
-        # Loader
-        with st.spinner("Thinking... (Searching Vector DB & Generating Answer)"):
-            try:
-                # Prepare Payload
-                # Shadcn slider returns list, need to extract value
-                alpha_val = alpha[0] if isinstance(alpha, list) else alpha
-                top_k_val = top_k[0] if isinstance(top_k, list) else top_k
+        with tab1:
+            with st.form("login_form"):
+                username = st.text_input("Username")
+                password = st.text_input("Password", type="password")
+                submitted = st.form_submit_button("Login", type="primary")
                 
-                payload = {
-                    "query": prompt,
-                    "top_k": int(top_k_val),
-                    "alpha": float(alpha_val),
-                    "use_query_expansion": use_expansion
-                }
-                
-                start_time = time.time()
-                
-                # --- Authenticate first (Auto-Login) ---
-                # Ideally this would be a login screen, but for this demo we auto-login as admin
-                auth_data = {
-                    "username": "admin",
-                    "password": "password"
-                }
-                
-                # 1. Get Token
-                token_response = requests.post(f"{BACKEND_URL.replace('/api/v1', '')}/api/v1/token", data=auth_data)
-                
-                if token_response.status_code != 200:
-                     st.error("Authentication Failed. Check backend logs.")
-                     st.stop()
-                     
-                token = token_response.json()["access_token"]
-                headers = {"Authorization": f"Bearer {token}"}
+                if submitted:
+                    try:
+                        # Ensure backend URL is base
+                        token_url = f"{BACKEND_URL}/token"
+                        # Handle potential double slash if BACKEND_URL ends with /api/v1
+                        if "api/v1/api/v1" in token_url: token_url = token_url.replace("api/v1/api/v1", "api/v1")
 
-                # 2. Query RAG
-                response = requests.post(
-                    f"{BACKEND_URL}/rag/query", 
-                    json=payload,
-                    headers=headers
-                )
-                elapsed = time.time() - start_time
+                        res = requests.post(token_url, data={"username": username, "password": password})
+                        if res.status_code == 200:
+                            data = res.json()
+                            st.session_state.token = data["access_token"]
+                            # Decode token to get role (naive decode for demo, or fetch /me)
+                            # We'll just assume role based on username/response or fetch via new endpoint
+                            # ideally /me endpoint, but for now we trust the login flow.
+                            # Let's decode or simply re-request or store role in response?
+                            # Our backend only returns token. Let's add role to return or decode JWT.
+                            # Quick hack: We know admin is admin.
+                            st.session_state.username = username
+                            if username == "admin": 
+                                st.session_state.role = "admin" 
+                            else: 
+                                st.session_state.role = "viewer"
+                            st.success("Login Successful!")
+                            st.rerun()
+                        else:
+                            st.error(f"Login Failed: {res.text}")
+                    except Exception as e:
+                        st.error(f"Connection Error: {e}")
+
+        with tab2:
+            with st.form("reg_form"):
+                new_user = st.text_input("New Username")
+                new_pass = st.text_input("New Password", type="password")
+                reg_submitted = st.form_submit_button("Create Account")
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    answer = data["answer"]
-                    sources = data["sources"]
-                    warning = data.get("warning")
+                if reg_submitted:
+                    try:
+                        reg_url = f"{BACKEND_URL}/register"
+                        # Handle potential double slash
+                        if "api/v1/api/v1" in reg_url: reg_url = reg_url.replace("api/v1/api/v1", "api/v1")
+
+                        res = requests.post(reg_url, json={"username": new_user, "password": new_pass})
+                        if res.status_code == 200:
+                            data = res.json()
+                            st.session_state.token = data["access_token"]
+                            st.session_state.username = new_user
+                            st.session_state.role = "viewer"
+                            st.success("Account Created!")
+                            st.rerun()
+                        else:
+                            st.error(f"Registration Failed: {res.text}")
+                    except Exception as e:
+                        st.error(f"Connection Error: {e}")
+
+# --- Application Views ---
+
+def sidebar():
+    with st.sidebar:
+        st.title("⚡ Enterprise RAG")
+        st.write(f"Logged in as: **{st.session_state.username}** ({st.session_state.role})")
+        
+        if st.button("Logout", type="secondary"):
+            st.session_state.token = None
+            st.session_state.role = None
+            st.session_state.messages = []
+            st.rerun()
+            
+        st.divider()
+        st.markdown("### ⚙️ Settings")
+        alpha = ui.slider(default_value=[0.5], min_value=0.0, max_value=1.0, step=0.1, label="Hybrid Search Alpha", key="alpha_slider")
+        top_k = ui.slider(default_value=[5], min_value=1, max_value=10, step=1, label="Retrieval Depth", key="top_k_slider")
+        use_expansion = ui.switch(default_checked=True, label="Query Expansion", key="qe_switch")
+        
+        return alpha, top_k, use_expansion
+
+def chat_interface(alpha, top_k, use_expansion):
+    st.markdown("## 💬 Knowledge Assistant")
+    
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"], avatar="🧑‍💻" if message["role"] == "user" else "🤖"):
+            st.markdown(message["content"])
+            if "sources" in message:
+                with st.expander(f"📚 View {len(message['sources'])} Sources"):
+                    for idx, source in enumerate(message["sources"]):
+                        st.caption(f"**Source {idx+1}**: {source.get('content', '')[:300]}...")
+
+    if prompt := st.chat_input("Ask a question about your documents..."):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user", avatar="🧑‍💻"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant", avatar="🤖"):
+            placeholder = st.empty()
+            with st.spinner("Searching Vector Database..."):
+                try:
+                    alpha_val = alpha[0] if isinstance(alpha, list) else alpha
+                    top_k_val = top_k[0] if isinstance(top_k, list) else top_k
                     
-                    full_response = answer
-                    if warning:
-                        full_response += f"\n\n**⚠️ Note**: {warning}"
+                    payload = {
+                        "query": prompt, "top_k": int(top_k_val), "alpha": float(alpha_val), "use_query_expansion": use_expansion
+                    }
+                    headers = {"Authorization": f"Bearer {st.session_state.token}"}
                     
-                    # Add stats footer
-                    stats_footer = f"\n\n*⏱️ Latency: {elapsed:.2f}s | 📄 Sources: {len(sources)}*"
-                    message_placeholder.markdown(full_response + stats_footer)
+                    rag_url = f"{BACKEND_URL}/rag/query"
+                    if "api/v1/api/v1" in rag_url: rag_url = rag_url.replace("api/v1/api/v1", "api/v1")
                     
-                    # Update Session State
-                    st.session_state.messages.append({
-                        "role": "assistant", 
-                        "content": full_response + stats_footer,
-                        "sources": sources,
-                        "timestamp": time.time()
-                    })
-                    st.session_state.request_count += 1
+                    res = requests.post(rag_url, json=payload, headers=headers)
                     
-                    # Show sources immediately in a nice way
-                    with st.expander(f"📚 View {len(sources)} Retrieved Sources"):
-                         for idx, source in enumerate(sources):
-                             st.info(f"**Source {idx+1}**: {source.get('content', '')[:300]}...")
-                             
-                else:
-                    error_msg = f"❌ Error {response.status_code}: {response.text}"
-                    message_placeholder.error(error_msg)
-                    st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                    if res.status_code == 200:
+                        data = res.json()
+                        full_res = data["answer"]
+                        if data.get("warning"): full_res += f"\n\n**⚠️ Note**: {data['warning']}"
+                        
+                        placeholder.markdown(full_res)
+                        st.session_state.messages.append({
+                            "role": "assistant", "content": full_res, "sources": data["sources"]
+                        })
+                        
+                        with st.expander("📚 Sources Cited"):
+                            for s in data["sources"]:
+                                st.info(s.get('content', '')[:300] + "...")
+                    else:
+                        err = f"❌ Error {res.status_code}: {res.text}"
+                        placeholder.error(err)
+                        st.session_state.messages.append({"role": "assistant", "content": err})
+                        
+                except Exception as e:
+                    placeholder.error(f"Error: {e}")
+
+def knowledge_base_interface():
+    st.markdown("## 📂 Knowledge Base Management")
+    st.info("Upload documents to ingest them immediately into the Vector Database.")
+    
+    # Upload
+    uploaded_file = st.file_uploader("Upload Document (PDF, TXT, DOCX)", type=["pdf", "txt", "docx"])
+    if uploaded_file:
+        if st.button("🚀 Upload & Ingest"):
+            with st.spinner("Uploading and Processing..."):
+                try:
+                    files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
+                    headers = {"Authorization": f"Bearer {st.session_state.token}"}
                     
-            except Exception as e:
-                message_placeholder.error(f"🔌 Connection Error: {e}")
-                st.session_state.messages.append({"role": "assistant", "content": f"Connection Error: {e}"})
+                    upload_url = f"{BACKEND_URL}/ingest/upload"
+                    if "api/v1/api/v1" in upload_url: upload_url = upload_url.replace("api/v1/api/v1", "api/v1")
+                    
+                    res = requests.post(upload_url, files=files, headers=headers)
+                    if res.status_code == 200:
+                        st.success(f"Success! {res.json()['message']}")
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error(f"Upload Failed: {res.text}")
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
+    st.divider()
+    
+    # List Files
+    st.subheader("Stored Documents")
+    try:
+        headers = {"Authorization": f"Bearer {st.session_state.token}"}
+        list_url = f"{BACKEND_URL}/ingest/files"
+        if "api/v1/api/v1" in list_url: list_url = list_url.replace("api/v1/api/v1", "api/v1")
+        
+        res = requests.get(list_url, headers=headers)
+        if res.status_code == 200:
+            files = res.json()
+            if files:
+                df = pd.DataFrame(files)
+                st.dataframe(df, use_container_width=True)
                 
-# Footer
-st.markdown("---")
-st.markdown("<center><small>Enterprise RAG Platform | Deployed on Render & HF Spaces</small></center>", unsafe_allow_html=True)
+                # Deletion Interface
+                to_delete = st.selectbox("Select file to delete", [f['filename'] for f in files])
+                col_d1, col_d2 = st.columns(2)
+                with col_d1:
+                    if st.button("🗑️ Delete File", type="primary"):
+                        del_url = f"{BACKEND_URL}/ingest/files/{to_delete}"
+                        if "api/v1/api/v1" in del_url: del_url = del_url.replace("api/v1/api/v1", "api/v1")
+                        requests.delete(del_url, headers=headers)
+                        st.success("File deleted.")
+                        time.sleep(1)
+                        st.rerun()
+                with col_d2:
+                    if st.button("🔄 Rebuild Vector Index"):
+                        reb_url = f"{BACKEND_URL}/ingest/rebuild"
+                        if "api/v1/api/v1" in reb_url: reb_url = reb_url.replace("api/v1/api/v1", "api/v1")
+                        with st.spinner("Rebuilding Index... This may take a while."):
+                            requests.post(reb_url, headers=headers)
+                            st.success("Index Rebuilt!")
+            else:
+                st.write("No files found in data directory.")
+        else:
+            st.error("Failed to fetch file list.")
+    except Exception as e:
+        st.error(f"Error fetching files: {e}")
+
+# --- Main Controller ---
+
+if not st.session_state.token:
+    login_register_view()
+else:
+    alpha, top_k, use_exp = sidebar()
+    
+    if st.session_state.role == "admin":
+        tab_chat, tab_kb = st.tabs(["💬 Chat", "📂 Knowledge Base"])
+        with tab_chat:
+            chat_interface(alpha, top_k, use_exp)
+        with tab_kb:
+            knowledge_base_interface()
+    else:
+        # Viewers only see Chat
+        chat_interface(alpha, top_k, use_exp)

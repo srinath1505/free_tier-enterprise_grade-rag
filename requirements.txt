@@ -26,3 +26,4 @@ langsmith>=0.1.0
 datasets>=2.14.0
 rouge_score>=0.1.2
 huggingface_hub>=0.24.0
+pandas>=2.0.0

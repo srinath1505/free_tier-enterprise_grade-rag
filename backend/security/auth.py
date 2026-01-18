@@ -34,28 +34,16 @@ class UserInDB(User):
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# --- In-Memory User Store (for Zero-Cost/No-DB setup) ---
-# Default password is "password" for simplicity in this demo
-# Hash generated via pwd_context.hash("password")
-fake_users_db = {
-    "admin": {
-        "username": "admin",
-        "role": "admin",
-        "hashed_password": "$pbkdf2-sha256$29000$QygF4JxTau09x1jL2ZsTYg$b.J.wPTCbfgymXOfFVUsGKxbn4G1gJbmh0gZPNxIZYw"
-    },
-    "viewer": {
-        "username": "viewer",
-        "role": "viewer",
-        "hashed_password": "$pbkdf2-sha256$29000$QygF4JxTau09x1jL2ZsTYg$b.J.wPTCbfgymXOfFVUsGKxbn4G1gJbmh0gZPNxIZYw"
-    }
-}
+# --- User Store Integration ---
+from backend.security.user_store import user_store
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
+    # db argument is kept for compatibility but we use the singleton user_store
+    user_dict = user_store.get_user(username)
+    if user_dict:
         return UserInDB(**user_dict)
     return None
 
@@ -85,7 +73,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
     
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user(None, username=token_data.username) # Pass None as db is handled internally
     if user is None:
         raise credentials_exception
     return user
