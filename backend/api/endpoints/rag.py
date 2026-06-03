@@ -1,36 +1,48 @@
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+import time
 from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from backend.database import get_db
+from backend.core.limiter import limiter
 from backend.engine.retriever import HybridRetriever
 from backend.engine.vector_store import VectorStore
-from backend.engine.llm import get_llm, LLMProvider
+from backend.engine.llm import get_llm, LLMError
+from backend.engine.query_expander import QueryExpander
+from backend.engine.reranker import Reranker
 from backend.security.sanitizer import InputSanitizer
 from backend.security.guardrails import SecurityLayer, SecurityException
-import time
 from backend.security.hallucination import HallucinationDetector
-from backend.core.observability import MetricsLogger, setup_langsmith
 from backend.security.auth import get_current_user, User
+from backend.core.observability import MetricsLogger
+from backend.models.user import User as DBUser
+from backend.api.endpoints.history import save_message
+
+from backend.core.config import settings
 
 router = APIRouter()
 
-# Dependency override for testing/singleton
-# In a real app, use lru_cache or a proper dependency injection container
-from backend.engine.query_expander import QueryExpander
-from backend.engine.reranker import Reranker
-
-# Global Singletons
+# Global singletons — initialised once on first request
 _vector_store = None
 _retriever = None
 _reranker = None
 _expander = None
 
+
+def get_vector_store():
+    global _vector_store
+    if _vector_store is None:
+        _vector_store = VectorStore()
+    return _vector_store
+
+
 def get_retriever():
-    global _vector_store, _retriever
+    global _retriever
     if _retriever is None:
-        if _vector_store is None:
-            _vector_store = VectorStore()
-        _retriever = HybridRetriever(_vector_store)
+        _retriever = HybridRetriever(get_vector_store())
     return _retriever
+
 
 def get_reranker():
     global _reranker
@@ -38,122 +50,127 @@ def get_reranker():
         _reranker = Reranker()
     return _reranker
 
+
 def get_expander():
     global _expander
     if _expander is None:
         _expander = QueryExpander()
     return _expander
 
+
 class QueryRequest(BaseModel):
     query: str
-    top_k: int = 5 
+    top_k: int = 5
     alpha: float = 0.5
-    use_query_expansion: bool = True # Enable by default for max accuracy
+    use_query_expansion: bool = True
+
 
 class QueryResponse(BaseModel):
     answer: str
     sources: List[Dict[str, Any]]
     warning: Optional[str] = None
-    user: str 
+    user: str
+
 
 @router.post("/query", response_model=QueryResponse)
-def query_rag(
-    request: QueryRequest, 
+@limiter.limit(f"{settings.RATE_LIMIT_QUERY_PER_MIN}/minute")
+async def query_rag(
+    request: Request,
+    body: QueryRequest,
     retriever: HybridRetriever = Depends(get_retriever),
     reranker: Reranker = Depends(get_reranker),
     expander: QueryExpander = Depends(get_expander),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     start_time = time.time()
     try:
-        # 0. Safety & Security Checks
-        # a. Sanitize PII
-        sanitizer = InputSanitizer()
-        clean_query = sanitizer.sanitize(request.query)
-        
-        # b. Validate & Guardrails
-        security_layer = SecurityLayer()
+        # 0. Sanitize & guardrails
+        clean_query = InputSanitizer().sanitize(body.query)
         try:
-            security_layer.validate(clean_query)
+            SecurityLayer().validate(clean_query)
         except SecurityException as e:
             raise HTTPException(status_code=400, detail=str(e))
-        
-        # 1. Query Expansion (Optional)
+
+        # 1. Query expansion — skip silently if LLM is offline (avoids a wasted
+        #    connection attempt before the answer-generation call also fails)
         queries_to_run = [clean_query]
-        if request.use_query_expansion:
-            # Generate variations (High Latency Step)
-            variations = expander.generate_variations(clean_query)
-            queries_to_run.extend(variations)
-        
-        # 2. Retrieve (High Recall) - Multi-Query Dedup
-        all_docs_map = {}
-        
-        # We fetch fewer docs per query since we run multiple queries
-        # k=10 per query * 4 queries = 40 candidates. 
-        # Reduced k to 5 per query to keep total pool size manageable for reranker
-        k_per_query = 5 if request.use_query_expansion else 10
-        
+        if body.use_query_expansion:
+            try:
+                queries_to_run.extend(expander.generate_variations(clean_query))
+            except LLMError:
+                pass  # LLM unreachable — proceed with original query only
+
+        # 2. Hybrid retrieval — multi-query with dedup
+        all_docs_map: Dict[Any, Dict] = {}
+        k_per_query = 5 if body.use_query_expansion else 10
         for q in queries_to_run:
-            docs = retriever.search(q, k=k_per_query, alpha=request.alpha)
-            for d in docs:
-                # Use source + info as ID, or hash content
-                doc_id = d.get('id', hash(d.get('content', '')))
+            for d in retriever.search(q, k=k_per_query, alpha=body.alpha):
+                doc_id = d.get("id", hash(d.get("content", "")))
                 if doc_id not in all_docs_map:
                     all_docs_map[doc_id] = d
-        
-        initial_docs = list(all_docs_map.values())
-        
-        # 3. Rerank (High Precision)
-        # Narrow down to Top 3 for LLM Generation
-        # We rerank against the ORIGINAL query to ensure relevance to user intent
-        ranked_docs = reranker.rerank(clean_query, initial_docs, top_k=3)
-        
-        # 4. Context Construction
-        if not ranked_docs:
-            context = "No relevant documents found."
-        else:
-            context = "\n\n".join([f"Source ({d.get('id', 'unknown')}): {d.get('content', '')}" for d in ranked_docs])
-        
+
+        # 3. Rerank → top 3
+        ranked_docs = reranker.rerank(clean_query, list(all_docs_map.values()), top_k=3)
+
+        # 4. Build context
+        context = (
+            "\n\n".join(
+                f"Source ({d.get('id', 'unknown')}): {d.get('content', '')}"
+                for d in ranked_docs
+            )
+            if ranked_docs
+            else "No relevant documents found."
+        )
+
         # 5. Generate
-        system_prompt = f"You are a helpful assistant. Use the following context to answer the user request. \nContext:\n{context}"
-        
-        llm = get_llm()
-        answer = llm.generate(request.query, system_prompt=system_prompt)
-        
-        # 6. Hallucination Check
-        detector = HallucinationDetector()
-        context_text = [doc.get('content', '') for doc in ranked_docs]
-        is_grounded, score, reason = detector.check_grounding(answer, context_text)
-        
-        warning = None
-        if not is_grounded:
-            warning = f"Confidence Low: Answer may not be fully grounded in context (Score: {score:.2f})"
-        
-        
-        # 7. Observability logging
-        end_time = time.time()
-        latency = (end_time - start_time) * 1000
+        system_prompt = (
+            f"You are a helpful assistant. Use the following context to answer the user request."
+            f"\nContext:\n{context}"
+        )
+        try:
+            answer = get_llm().generate(body.query, system_prompt=system_prompt)
+        except LLMError as e:
+            raise HTTPException(status_code=503, detail=str(e))
+
+        # 6. Hallucination check
+        context_text = [d.get("content", "") for d in ranked_docs]
+        is_grounded, score, _ = HallucinationDetector().check_grounding(answer, context_text)
+        warning = (
+            f"Confidence Low: Answer may not be fully grounded in context (Score: {score:.2f})"
+            if not is_grounded
+            else None
+        )
+
+        # 7. Persist chat history
+        db_result = await db.execute(select(DBUser).where(DBUser.username == current_user.username))
+        db_user = db_result.scalar_one_or_none()
+        if db_user:
+            session_id = current_user.username
+            await save_message(db, db_user.id, session_id, "user", body.query)
+            await save_message(db, db_user.id, session_id, "assistant", answer)
+
+        # 8. Metrics
+        latency = (time.time() - start_time) * 1000
         MetricsLogger.log_request(
             endpoint="rag_query",
             user=current_user.username,
             latency_ms=latency,
             success=True,
             metadata={
-                "query_len": len(request.query),
+                "query_len": len(body.query),
                 "answer_len": len(answer),
                 "hallucination_score": score,
                 "blocked": False,
                 "reranked_count": len(ranked_docs),
-                "expansion_strategies": len(queries_to_run)
-            }
+                "expansion_strategies": len(queries_to_run),
+            },
         )
 
-        return QueryResponse(
-            answer=answer, 
-            sources=ranked_docs, 
-            warning=warning,
-            user=current_user.username
-        )
+        return QueryResponse(answer=answer, sources=ranked_docs, warning=warning, user=current_user.username)
+
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()

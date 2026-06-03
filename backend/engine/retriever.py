@@ -15,11 +15,18 @@ class HybridRetriever:
             self._rebuild_bm25()
 
     def _rebuild_bm25(self):
-        # Extract text content from metadata for BM25
-        # Assuming metadata has 'content' or 'text' field
         self.documents = [m.get('content', '') for m in self.vector_store.metadata]
         tokenized_corpus = [doc.split(" ") for doc in self.documents]
         self.bm25 = BM25Okapi(tokenized_corpus)
+
+    def reload(self):
+        """Reload FAISS index from disk and rebuild BM25 corpus (call after ingest/rebuild)."""
+        self.vector_store.reload()
+        if self.vector_store.metadata:
+            self._rebuild_bm25()
+        else:
+            self.bm25 = None
+            self.documents = []
 
     def search(self, query: str, k: int = settings.TOP_K_RETRIEVAL, alpha: float = 0.5) -> List[Dict[str, Any]]:
         # 1. Vector Search

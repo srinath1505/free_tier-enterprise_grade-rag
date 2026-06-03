@@ -1,119 +1,227 @@
-# 🚀 Enterprise RAG Platform: Zero-Cost & Production-Ready
+# Enterprise RAG Platform — Zero-Cost & Production-Ready
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B.svg)](https://streamlit.io/)
+[![Tests](https://img.shields.io/badge/smoke%20tests-71%2F71%20%E2%80%94%20100%25-brightgreen)](test_report.md)
 
-### **Democratizing Enterprise-Grade AI**
-Most "Enterprise" RAG solutions require massive cloud budgets. This platform proves that you can deliver **highly accurate, secure, and observable** AI systems using entirely **free-tier infrastructure**. 
-
-By orchestrating **Hybrid Search**, **Cross-Encoder Reranking**, and **Zero-Trust Security**, this project bridges the gap between a simple prototype and a production microservice.
-
----
-
-## 🏗️ Scalability & Vendor-Agnostic Design
-
-A core philosophy of this project is **Architectural Flexibility**. While it currently runs on 100% free-tier services to showcase cost-efficiency, the backend is built using a **Decoupled FastAPI Architecture**.
-
-* **Easy Swap-Ability:** Because the logic is modular, you can transition from "Free-Tier" to "Global-Scale" in minutes by simply updating your `.env` config.
-* **Scalability:** FastAPI’s asynchronous nature allows the platform to handle high concurrency, ready for containerization and K8s deployment.
-
-> **Why this matters:** This project is a proof-of-concept for "Cost-First Development." Build and validate your business logic for $0, then scale to paid enterprise providers only when your traffic justifies the cost.
+**Democratizing Enterprise-Grade AI.**  
+Most "Enterprise" RAG solutions require massive cloud budgets. This platform proves you can deliver
+a **highly accurate, secure, and observable** AI system on **entirely free-tier infrastructure**.
 
 ---
 
-## ⭐ Key Features (V2.0)
+## Architecture
 
-### 1. Self-Service Knowledge Base 📂
-*   **Drag-Drop Ingestion:** Admins can upload PDF/DOCX/TXT files directly from the UI.
-*   **Instant Indexing:** Files are processed, chunked, and embedded into the Vector DB immediately.
-*   **Management:** View list of documents and delete outdated files with one click.
+```mermaid
+flowchart TD
+    U([User]) --> FE[Streamlit Frontend]
+    FE -->|JWT Bearer| API[FastAPI Backend]
 
-### 2. Enterprise Authentication 🔐
-*   **Persistent User Accounts:** User data is securely stored in `users.json`, surviving server restarts.
-*   **Role-Based Access Control (RBAC):**
-    *   **Admin:** Full access to Knowledge Base and System Settings.
-    *   **Viewer:** Chat-only access.
-*   **Self-Registration:** New users can sign up instantly via the login screen.
+    API --> AUTH[Auth Layer\nSQLite · JWT · RBAC]
+    API --> GUARD[Security Guardrails\nPII redact · injection · toxicity]
+    GUARD --> EXP[Query Expander\nLLM variations]
+    EXP --> RET[Hybrid Retriever\nFAISS + BM25 · RRF fusion]
+    RET --> RNK[Cross-Encoder Reranker\nms-marco-TinyBERT]
+    RNK --> LLM[LLM Generator\nOllama local · HF Inference API]
+    LLM --> HAL[Hallucination Detector\ncosine similarity check]
+    HAL --> HIST[Chat History\nSQLite conversations table]
+    HIST --> FE
 
-### 3. Advanced Retrieval Engine 🧠
-*   **Hybrid Search (Dense + Sparse):** Combines **FAISS** (Vector) with **BM25** (Keyword).
-*   **Weighted RRF:** Merges results for maximum relevance.
-*   **Multi-Query Expansion:** Generates prompt variations to capture user intent.
-*   **Cross-Encoder Reranking:** Re-scores documents using `ms-marco-TinyBERT` to reduce hallucinations.
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Why? |
-| :--- | :--- | :--- |
-| **Backend** | FastAPI / Pydantic | Async performance and modular endpoints. |
-| **Frontend** | Streamlit + Shadcn | Professional "Glassmorphism" UI with Admin/Chat tabs. |
-| **Vector Engine**| FAISS | High-speed local search (Zero Cost). |
-| **Inference** | Hugging Face Hub | Serverless, high-performance LLMs. |
-| **Auth** | JWT + OAuth2 | Secure, industry-standard authentication. |
+    API --> RATE[Rate Limiter\nslowapi · per-user + per-IP]
+    API --> OBS[Observability\nstructured JSON logs]
+```
 
 ---
 
-## ⚡ Getting Started
+## What's Inside (v2.0)
 
-Launch your own RAG platform in under 5 minutes.
+### Retrieval Engine
+- **Hybrid search** — FAISS (dense vectors) + BM25 (keyword), fused with Reciprocal Rank Fusion
+- **Multi-query expansion** — LLM generates query variations to widen recall
+- **Cross-encoder reranking** — `ms-marco-MiniLM` re-scores top candidates to reduce hallucinations
+- **Hallucination grounding check** — cosine similarity between answer and retrieved context
 
-### 1. Clone & Setup
+### Security
+- **JWT authentication** with admin / viewer RBAC — any admin username works, not just "admin"
+- **Input validation** — username format, password complexity enforced at registration
+- **Security guardrails** — prompt injection detection, jailbreak patterns, toxic keywords, PII redaction
+- **File upload validation** — type allowlist, 50 MB size cap, path-traversal sanitisation — all before disk write
+- **Rate limiting** — configurable per-IP for auth, per-user for query/upload (slowapi)
+
+### Persistence & Ops
+- **SQLite** user store (async SQLAlchemy + aiosqlite) — replaces flat `users.json`
+- **Persistent chat history** — `conversations` table keyed by username
+- **Docker Compose** — backend + frontend + named volumes in one command
+- **Health endpoint** — `GET /health` for Docker / load-balancer probes
+- **`/me` endpoint** — returns `{username, role}` from JWT for frontend role-aware UI
+- **Configurable rate limits** — override via env vars, no redeployment needed
+- **Structured logs** — stdout by default; set `LOG_FILE_DIR` for rotating file logs
+
+---
+
+## Cost Comparison
+
+| Component | Typical Commercial | This Stack |
+|-----------|-------------------|------------|
+| Vector DB | Pinecone Starter ~$70/mo | FAISS — local, free |
+| LLM API | OpenAI GPT-4 ~$100–400/mo | Ollama (local) or HF Free Tier |
+| Cloud infra | AWS / GCP ~$50–100/mo | Render free tier / local |
+| Auth / DB | Auth0 ~$23/mo + RDS ~$15/mo | SQLite + JWT — built-in |
+| **Total** | **~$260–610/mo** | **$0** |
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| Backend | FastAPI + Pydantic | Async performance, automatic OpenAPI docs |
+| Frontend | Streamlit | Rapid UI with admin/chat role separation |
+| Auth | JWT + SQLite (aiosqlite) | Zero infra cost, industry-standard tokens |
+| Vector search | FAISS | GPU-optional, high-speed local ANN |
+| Keyword search | BM25 (rank-bm25) | Complementary sparse signal, no index server |
+| Reranker | ms-marco-MiniLM | Cross-encoder precision, runs on CPU |
+| LLM | Ollama (local) / HF Inference | Swap by setting `LLM_PROVIDER` in `.env` |
+| Rate limiting | slowapi | Per-user + per-IP, configurable via env |
+| Containers | Docker Compose | One-command deployment |
+
+---
+
+## Quick Start
+
+### Option A — Docker Compose (recommended)
+
 ```bash
 git clone https://github.com/srinath1505/free_tier-enterprise_grade-rag.git
 cd free_tier-enterprise_grade-rag
 
-# Create Virtual Environment (Recommended)
-python -m venv venv
-.\venv\Scripts\Activate  # Windows
-source venv/bin/activate # Linux/Mac
+cp .env.example .env
+# Edit .env — set SECRET_KEY and ADMIN_DEFAULT_PASSWORD at minimum
 
-# Install Dependencies
-pip install -r requirements.txt
+docker compose up --build
 ```
 
-### 2. Configuration
-Copy the example environment file:
+Frontend: http://localhost:8501 | API docs: http://localhost:8000/api/v1/openapi.json
+
+### Option B — Local (two terminals)
+
 ```bash
+git clone https://github.com/srinath1505/free_tier-enterprise_grade-rag.git
+cd free_tier-enterprise_grade-rag
+python -m venv venv
+.\venv\Scripts\Activate   # Windows
+source venv/bin/activate  # Linux / macOS
+pip install -r requirements.txt
 cp .env.example .env
 ```
-Edit `.env` and add your **Hugging Face Token** (Get one [here](https://huggingface.co/settings/tokens)):
-```ini
-HF_TOKEN=hf_your_token_here
-LLM_PROVIDER=hf
-```
 
-### 3. Run the Platform
-Open two terminals:
-
-**Terminal 1 (Backend API)**
+**Terminal 1 — Backend**
 ```bash
 uvicorn backend.main:app --reload
 ```
 
-**Terminal 2 (Frontend UI)**
+**Terminal 2 — Frontend**
 ```bash
 streamlit run frontend/app.py
 ```
-Visit `http://localhost:8501` to login.
 
-*   **Default Admin:** `admin` / `password`
-*   **Or Register:** create a new account in the UI.
+### LLM options
+
+**Ollama (local, fully offline)**
+```ini
+LLM_PROVIDER=local
+OLLAMA_BASE_URL=http://localhost:11434
+```
+Install Ollama, then `ollama pull mistral`.
+
+**Hugging Face Inference API (free tier)**
+```ini
+LLM_PROVIDER=hf
+HF_TOKEN=hf_your_token_here
+```
+Get a free token at https://huggingface.co/settings/tokens.
+
+### Default credentials
+| Account | Username | Password |
+|---------|---------|---------|
+| Admin | `admin` | `password` |
+| New accounts | register via UI | viewer role |
+
+> **Change `ADMIN_DEFAULT_PASSWORD` in `.env` before deploying.** The backend warns at startup if the default is still in use.
 
 ---
 
-## 🗺️ Roadmap
+## Environment Variables
 
-* **Evaluation Framework:** Integration of **RAGAS** for automated scoring.
-* **Persistent Memory:** PostgreSQL/Redis layer for chat history.
-* **Intelligent Parsing:** Handling complex tables/images via Unstructured.io.
+| Variable | Default | Notes |
+|----------|---------|-------|
+| `SECRET_KEY` | _(long placeholder)_ | **Must change** — JWT signing key |
+| `ADMIN_DEFAULT_PASSWORD` | `password` | Admin seed password — **Must change** |
+| `DATABASE_URL` | `sqlite+aiosqlite:///./users.db` | Overridden in Docker Compose |
+| `LLM_PROVIDER` | `local` | `local` = Ollama, `hf` = Hugging Face |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Use `host.docker.internal` in Docker |
+| `HF_TOKEN` | _(empty)_ | Required when `LLM_PROVIDER=hf` |
+| `MAX_UPLOAD_SIZE_MB` | `50` | File upload cap |
+| `RATE_LIMIT_AUTH_PER_MIN` | `20` | `/token` + `/register` per-IP |
+| `RATE_LIMIT_QUERY_PER_MIN` | `20` | `/rag/query` per-user |
+| `RATE_LIMIT_UPLOAD_PER_MIN` | `10` | `/ingest/upload` per-user |
+| `LOG_FILE_DIR` | _(empty)_ | Set to a path to enable rotating file logs |
 
 ---
 
-## 👨‍💻 Built By
+## API Overview
 
-**Srinath Selvakumar**  
-*Engineering accessible AI solutions.*
+```
+GET  /health                          → {"status":"ok"}  — Docker/LB probe
+GET  /                                → welcome message
+POST /api/v1/token                    → login → JWT
+POST /api/v1/register                 → register → JWT
+GET  /api/v1/me                       → {username, role} from current JWT
+
+POST /api/v1/rag/query                → hybrid retrieve → rerank → LLM → answer
+POST /api/v1/ingest/upload  [admin]   → upload PDF/DOCX/TXT → index
+GET  /api/v1/ingest/files   [admin]   → list knowledge-base files
+DELETE /api/v1/ingest/files/{name} [admin]
+POST /api/v1/ingest/rebuild [admin]   → wipe + re-ingest all files
+
+GET  /api/v1/history/{session_id}     → chat history (own session only)
+```
+
+Interactive docs: http://localhost:8000/api/v1/openapi.json
+
+---
+
+## QA
+
+The repo ships with a comprehensive smoke test:
+
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port 8000  # terminal 1
+python smoke_test.py                                   # terminal 2
+```
+
+Last result: **71/71 assertions — 100% pass rate.**  
+Full details in [test_report.md](test_report.md).
+
+---
+
+## Roadmap
+
+| Item | Status |
+|------|--------|
+| SQLite user store + JWT auth | Done (v2.0) |
+| Persistent chat history | Done (v2.0) |
+| Docker Compose | Done (v2.0) |
+| Rate limiting | Done (v2.0) |
+| Input validation + security guardrails | Done (v2.0) |
+| RAGAS evaluation framework | Pending |
+| Multi-tenancy (per-user document isolation) | Pending — design questions unresolved |
+| Demo GIF | Pending |
+
+---
+
+## Built By
+
+**Srinath Selvakumar** — Engineering accessible AI solutions.

@@ -5,3 +5,8 @@ venv/
 .git/
 vector_store/
 data/
+users.db
+*.db
+*.log
+users.json
+HANDOFF.md

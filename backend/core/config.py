@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "YOUR_SUPER_SECRET_KEY_CHANGE_IN_PROD"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ADMIN_DEFAULT_PASSWORD: str = "password"  # Override before first deploy
     
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
     # Paths
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     VECTOR_STORE_PATH: str = os.path.join(BASE_DIR, "vector_store")
+    DATABASE_URL: str = "sqlite+aiosqlite:///./users.db"
     
     # LLM Settings
     # Supports 'local' (Ollama) or 'hf' (Hugging Face Inference API)
@@ -34,8 +36,15 @@ class Settings(BaseSettings):
     RERANKER_MODEL_NAME: str = "cross-encoder/ms-marco-TinyBERT-L-2-v2"
     TOP_K_RETRIEVAL: int = 5
     
+    # Rate limits (requests/minute). Auth endpoints use per-IP fallback so a
+    # higher ceiling prevents shared-NAT environments from being locked out.
+    RATE_LIMIT_AUTH_PER_MIN: int = 20
+    RATE_LIMIT_QUERY_PER_MIN: int = 20
+    RATE_LIMIT_UPLOAD_PER_MIN: int = 10
+
     # Constraints
     MAX_MEMORY_MB: int = 512
+    MAX_UPLOAD_SIZE_MB: int = 50
 
     class Config:
         case_sensitive = True

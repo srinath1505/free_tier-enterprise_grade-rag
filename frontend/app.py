@@ -2,9 +2,22 @@ import streamlit as st
 import streamlit_shadcn_ui as ui
 import requests
 import json
+import base64
 import os
 import time
 import pandas as pd
+
+
+def _decode_token_role(token: str) -> str:
+    """Read the role claim from a JWT without signature verification.
+    Safe because the backend verifies the signature on every API call."""
+    try:
+        payload_b64 = token.split(".")[1]
+        payload_b64 += "=" * (4 - len(payload_b64) % 4)
+        payload = json.loads(base64.b64decode(payload_b64))
+        return payload.get("role", "viewer")
+    except Exception:
+        return "viewer"
 
 # Configuration
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
@@ -34,6 +47,23 @@ if "role" not in st.session_state: st.session_state.role = None
 if "username" not in st.session_state: st.session_state.username = None
 if "messages" not in st.session_state: st.session_state.messages = []
 if "request_count" not in st.session_state: st.session_state.request_count = 0
+if "history_loaded" not in st.session_state: st.session_state.history_loaded = False
+
+
+def load_history():
+    """Fetch persisted chat history from backend and populate session messages."""
+    if st.session_state.history_loaded or not st.session_state.token:
+        return
+    try:
+        url = f"{BACKEND_URL}/history/{st.session_state.username}"
+        res = requests.get(url, headers={"Authorization": f"Bearer {st.session_state.token}"})
+        if res.status_code == 200:
+            for msg in res.json():
+                st.session_state.messages.append({"role": msg["role"], "content": msg["content"]})
+    except Exception:
+        pass  # history is optional — don't block login on failure
+    finally:
+        st.session_state.history_loaded = True
 
 # --- Authentication Views ---
 
@@ -60,17 +90,10 @@ def login_register_view():
                         if res.status_code == 200:
                             data = res.json()
                             st.session_state.token = data["access_token"]
-                            # Decode token to get role (naive decode for demo, or fetch /me)
-                            # We'll just assume role based on username/response or fetch via new endpoint
-                            # ideally /me endpoint, but for now we trust the login flow.
-                            # Let's decode or simply re-request or store role in response?
-                            # Our backend only returns token. Let's add role to return or decode JWT.
-                            # Quick hack: We know admin is admin.
                             st.session_state.username = username
-                            if username == "admin": 
-                                st.session_state.role = "admin" 
-                            else: 
-                                st.session_state.role = "viewer"
+                            st.session_state.role = _decode_token_role(data["access_token"])
+                            st.session_state.history_loaded = False
+                            load_history()
                             st.success("Login Successful!")
                             st.rerun()
                         else:
@@ -96,6 +119,7 @@ def login_register_view():
                             st.session_state.token = data["access_token"]
                             st.session_state.username = new_user
                             st.session_state.role = "viewer"
+                            st.session_state.history_loaded = True  # new user — no history to load
                             st.success("Account Created!")
                             st.rerun()
                         else:
@@ -113,7 +137,9 @@ def sidebar():
         if st.button("Logout", type="secondary"):
             st.session_state.token = None
             st.session_state.role = None
+            st.session_state.username = None
             st.session_state.messages = []
+            st.session_state.history_loaded = False
             st.rerun()
             
         st.divider()

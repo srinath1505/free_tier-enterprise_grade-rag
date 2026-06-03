@@ -16,8 +16,8 @@ COPY ingestion ./ingestion
 # Copy config/env if needed, or pass as ENV vars
 # We skip .env for security, inject variables at runtime
 
-# Create vector store directory
-RUN mkdir -p vector_store
+# Create runtime directories
+RUN mkdir -p vector_store data db
 
 # Uploaded/ingested data should be mounted or copied
 # For this image, we might assume ingestion happens at build or run time.

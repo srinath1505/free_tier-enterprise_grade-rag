@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-local}
+      # For Ollama running on the host machine, use host.docker.internal (Mac/Windows)
+      # On Linux: replace with your host IP or run Ollama in a separate container
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-phi3:mini}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HF_INFERENCE_API_URL=${HF_INFERENCE_API_URL:-mistralai/Mistral-7B-Instruct-v0.2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      # DB lives in a named volume so users survive container restarts
+      - DATABASE_URL=sqlite+aiosqlite:////app/db/users.db
+    volumes:
+      - ./vector_store:/app/vector_store   # FAISS index
+      - ./data:/app/data                   # uploaded documents
+      - rag_db:/app/db                     # SQLite user DB
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      # Points to the backend service by its Docker Compose service name
+      - BACKEND_URL=http://backend:8000/api/v1
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  rag_db:   # Named volume keeps users.db across docker compose down / up

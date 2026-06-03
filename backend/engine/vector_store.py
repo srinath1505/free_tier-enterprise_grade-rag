@@ -1,6 +1,7 @@
 import os
-import faiss
+import json
 import pickle
+import faiss
 import numpy as np
 from typing import List, Dict, Any
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -21,20 +22,25 @@ class VectorStore:
         self._load_or_initialize()
 
     def _load_or_initialize(self):
-        if not os.path.exists(settings.VECTOR_STORE_PATH):
-            os.makedirs(settings.VECTOR_STORE_PATH, exist_ok=True)
-            
+        os.makedirs(settings.VECTOR_STORE_PATH, exist_ok=True)
+
         index_path = os.path.join(settings.VECTOR_STORE_PATH, "index.faiss")
-        meta_path = os.path.join(settings.VECTOR_STORE_PATH, "metadata.pkl")
-        
-        if os.path.exists(index_path) and os.path.exists(meta_path):
+        meta_json = os.path.join(settings.VECTOR_STORE_PATH, "metadata.json")
+        meta_pkl  = os.path.join(settings.VECTOR_STORE_PATH, "metadata.pkl")
+
+        if os.path.exists(index_path) and (os.path.exists(meta_json) or os.path.exists(meta_pkl)):
             self.index = faiss.read_index(index_path)
-            with open(meta_path, "rb") as f:
-                self.metadata = pickle.load(f)
+            if os.path.exists(meta_json):
+                with open(meta_json, "r", encoding="utf-8") as f:
+                    self.metadata = json.load(f)
+            else:
+                # One-time migration from legacy pickle format
+                with open(meta_pkl, "rb") as f:
+                    self.metadata = pickle.load(f)
+                self.save()          # write JSON
+                os.remove(meta_pkl)  # drop the pickle file
         else:
-            # Initialize empty index (will be recreated on first add if dimension unknown, 
-            # but we know it is 384 for the selected model)
-            self.index = faiss.IndexFlatIP(384) 
+            self.index = faiss.IndexFlatIP(384)
             self.metadata = []
 
     def add_documents(self, texts: List[str], metadatas: List[Dict[str, Any]]):
@@ -67,12 +73,15 @@ class VectorStore:
         
         return results
 
+    def reload(self):
+        """Reload the FAISS index and metadata from disk (called after external writes)."""
+        self._load_or_initialize()
+
     def save(self):
-        if not os.path.exists(settings.VECTOR_STORE_PATH):
-            os.makedirs(settings.VECTOR_STORE_PATH)
-            
+        os.makedirs(settings.VECTOR_STORE_PATH, exist_ok=True)
+
         if self.index:
             faiss.write_index(self.index, os.path.join(settings.VECTOR_STORE_PATH, "index.faiss"))
-        
-        with open(os.path.join(settings.VECTOR_STORE_PATH, "metadata.pkl"), "wb") as f:
-            pickle.dump(self.metadata, f)
+
+        with open(os.path.join(settings.VECTOR_STORE_PATH, "metadata.json"), "w", encoding="utf-8") as f:
+            json.dump(self.metadata, f)
