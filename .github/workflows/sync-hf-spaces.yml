@@ -18,16 +18,20 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Copy repo into a clean staging directory
+          set -euo pipefail
+
+          # ── Validate the token can reach the Space before doing any work ──
+          echo "=== Checking Space accessibility ==="
+          git ls-remote \
+            https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend \
+            || { echo "FATAL: Cannot reach Space. Check HF_TOKEN scope (needs write) and Space name."; exit 1; }
+
+          echo "=== Preparing deploy tree ==="
           rsync -a --exclude='.git' --exclude='.env' . /tmp/space/
           cd /tmp/space
 
-          # Swap in the Spaces-specific Dockerfile (port 7860)
           cp Dockerfile.spaces Dockerfile
 
-          # HF Spaces needs a README.md with YAML frontmatter at the root.
-          # IMPORTANT: heredoc content must start at column 0 — no leading
-          # whitespace or the --- delimiters won't be parsed as frontmatter.
           cat > README.md << 'HFEOF'
 ---
 title: Enterprise RAG Backend
@@ -40,12 +44,13 @@ pinned: false
 ---
 HFEOF
 
-          # Force-push a clean history to the Space
+          echo "=== Pushing to HF Space ==="
           git init
           git config user.email "114842401+Srinath-54@users.noreply.github.com"
           git config user.name "Srinath-54"
           git add -A
           git commit -m "deploy $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          git push \
+          GIT_TRACE=1 git push \
             https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend \
             HEAD:main --force
+          echo "=== Push complete ==="
