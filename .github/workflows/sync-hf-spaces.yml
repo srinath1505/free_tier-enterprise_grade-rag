@@ -14,25 +14,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Push to HF Space
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install huggingface_hub
+        run: pip install "huggingface_hub>=0.23.0"
+
+      - name: Prepare deploy tree
         run: |
-          set -euo pipefail
-
-          # ── Validate the token can reach the Space before doing any work ──
-          echo "=== Checking Space accessibility ==="
-          git ls-remote \
-            https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend \
-            || { echo "FATAL: Cannot reach Space. Check HF_TOKEN scope (needs write) and Space name."; exit 1; }
-
-          echo "=== Preparing deploy tree ==="
           rsync -a --exclude='.git' --exclude='.env' . /tmp/space/
-          cd /tmp/space
 
-          cp Dockerfile.spaces Dockerfile
+          # Swap in the Spaces Dockerfile (port 7860)
+          cp /tmp/space/Dockerfile.spaces /tmp/space/Dockerfile
 
-          cat > README.md << 'HFEOF'
+          # Write the HF Space README — must start at column 0, no leading spaces
+          cat > /tmp/space/README.md << 'HFEOF'
 ---
 title: Enterprise RAG Backend
 emoji: 🤖
@@ -44,13 +42,27 @@ pinned: false
 ---
 HFEOF
 
-          echo "=== Pushing to HF Space ==="
-          git init
-          git config user.email "114842401+Srinath-54@users.noreply.github.com"
-          git config user.name "Srinath-54"
-          git add -A
-          git commit -m "deploy $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          GIT_TRACE=1 git push \
-            https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend \
-            HEAD:main --force
-          echo "=== Push complete ==="
+          echo "=== Files in deploy tree ==="
+          ls /tmp/space/
+
+      - name: Upload to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python3 << 'PYEOF'
+import os
+from huggingface_hub import HfApi
+
+token = os.environ["HF_TOKEN"]
+api   = HfApi(token=token)
+
+print("Uploading to HF Space...")
+api.upload_folder(
+    folder_path="/tmp/space",
+    repo_id="Srinath-54/rag-backend",
+    repo_type="space",
+    commit_message="deploy from GitHub Actions",
+    ignore_patterns=["*.pyc", "__pycache__/", ".env", "*.db", "vector_store/", "data/"],
+)
+print("Upload complete — Space will rebuild automatically.")
+PYEOF
