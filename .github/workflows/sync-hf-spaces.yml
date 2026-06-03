@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,25 +25,27 @@ jobs:
           # Swap in the Spaces-specific Dockerfile (port 7860)
           cp Dockerfile.spaces Dockerfile
 
-          # HF Spaces requires a README.md with YAML frontmatter at root
+          # HF Spaces needs a README.md with YAML frontmatter at the root.
+          # IMPORTANT: heredoc content must start at column 0 — no leading
+          # whitespace or the --- delimiters won't be parsed as frontmatter.
           cat > README.md << 'HFEOF'
-          ---
-          title: Enterprise RAG Backend
-          emoji: 🤖
-          colorFrom: blue
-          colorTo: purple
-          sdk: docker
-          app_port: 7860
-          pinned: false
-          ---
-          HFEOF
+---
+title: Enterprise RAG Backend
+emoji: 🤖
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+HFEOF
 
           # Force-push a clean history to the Space
           git init
-          git config user.email "114842401+srinath1505@users.noreply.github.com"
-          git config user.name "srinath1505"
+          git config user.email "114842401+Srinath-54@users.noreply.github.com"
+          git config user.name "Srinath-54"
           git add -A
           git commit -m "deploy $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           git push \
-            https://srinath1505:${HF_TOKEN}@huggingface.co/spaces/srinath1505/rag-backend \
+            https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend \
             HEAD:main --force

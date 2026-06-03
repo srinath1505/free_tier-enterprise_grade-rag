@@ -9,4 +9,4 @@ services:
     plan: free
     envVars:
       - key: BACKEND_URL
-        sync: false   # Enter your HF Space URL: https://srinath1505-rag-backend.hf.space
+        sync: false   # Enter your HF Space URL: https://Srinath-54-rag-backend.hf.space

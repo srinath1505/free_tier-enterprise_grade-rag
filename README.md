@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B.svg)](https://streamlit.io/)
 [![Tests](https://img.shields.io/badge/smoke%20tests-71%2F71%20%E2%80%94%20100%25-brightgreen)](test_report.md)
-[![Backend on HF Spaces](https://img.shields.io/badge/Backend-HF%20Spaces%20(free%2016GB)-FFD21E?logo=huggingface&logoColor=000)](https://huggingface.co/spaces/srinath1505/rag-backend)
+[![Backend on HF Spaces](https://img.shields.io/badge/Backend-HF%20Spaces%20(free%2016GB)-FFD21E?logo=huggingface&logoColor=000)](https://huggingface.co/spaces/Srinath-54/rag-backend)
 [![Frontend on Render](https://img.shields.io/badge/Frontend-Render%20free%20tier-46E3B7?logo=render&logoColor=000)](https://render.com/deploy?repo=https://github.com/srinath1505/free_tier-enterprise_grade-rag)
 
 **Democratizing Enterprise-Grade AI.**  
@@ -112,7 +112,7 @@ frontend runs on **Render free tier** (512 MB is plenty for 4 packages).
 3. Push any commit to `main` — the **Deploy Backend to HF Spaces** GitHub Action runs automatically
    and pushes the backend to your Space.
 4. Wait for the Space to build (~10 min first time). Your backend URL will be:  
-   `https://srinath1505-rag-backend.hf.space`
+   `https://Srinath-54-rag-backend.hf.space`
 
 > **Free-tier note:** HF Spaces sleep after inactivity (~30 s cold start on next request). Data
 > (SQLite DB + FAISS index) resets on redeploy — fine for demos. To keep the Space always-on,
@@ -126,7 +126,7 @@ When prompted, enter:
 
 | Prompt | Value |
 |--------|-------|
-| `BACKEND_URL` | `https://srinath1505-rag-backend.hf.space` |
+| `BACKEND_URL` | `https://Srinath-54-rag-backend.hf.space` |
 
 > **Free-tier note:** Render free services also spin down after 15 minutes of inactivity
 > (~30 s cold start). Perfect for showing the platform; not for production.
