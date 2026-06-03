@@ -5,32 +5,46 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install huggingface_hub
-        run: pip install "huggingface_hub>=0.23.0"
-
-      - name: Prepare deploy tree
+      - name: Configure git
         run: |
-          rsync -a --exclude='.git' --exclude='.env' . /tmp/space/
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Clone HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git clone "https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend" /tmp/hf-space
+          echo "=== Current HF Space files ==="
+          ls /tmp/hf-space/
+
+      - name: Sync files into HF Space
+        run: |
+          # Remove everything except .git
+          find /tmp/hf-space -mindepth 1 -not -path '/tmp/hf-space/.git*' -delete
+
+          # Copy our files in
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.env' \
+            --exclude='*.pyc' \
+            --exclude='__pycache__' \
+            --exclude='*.db' \
+            --exclude='vector_store/' \
+            --exclude='data/' \
+            . /tmp/hf-space/
 
           # Swap in the Spaces Dockerfile (port 7860)
-          cp /tmp/space/Dockerfile.spaces /tmp/space/Dockerfile
+          cp /tmp/hf-space/Dockerfile.spaces /tmp/hf-space/Dockerfile
 
-          # Write the HF Space README — must start at column 0, no leading spaces
-          cat > /tmp/space/README.md << 'HFEOF'
+          # Write the HF Space README with required card metadata
+          cat > /tmp/hf-space/README.md << 'HFEOF'
 ---
 title: Enterprise RAG Backend
 emoji: 🤖
@@ -42,44 +56,17 @@ pinned: false
 ---
 HFEOF
 
-          echo "=== Files in deploy tree ==="
-          ls /tmp/space/
+          echo "=== Files to deploy ==="
+          ls /tmp/hf-space/
 
-      - name: Upload to HF Space
+      - name: Push to HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python3 << 'PYEOF'
-import os
-import sys
-from huggingface_hub import HfApi
-
-token = os.environ.get("HF_TOKEN", "")
-if not token:
-    print("ERROR: HF_TOKEN secret is empty or not set", flush=True)
-    sys.exit(1)
-
-api = HfApi(token=token)
-
-# Verify token identity
-try:
-    whoami = api.whoami()
-    print(f"Authenticated as: {whoami['name']}", flush=True)
-except Exception as e:
-    print(f"ERROR: Token validation failed: {e}", flush=True)
-    sys.exit(1)
-
-print("Uploading to HF Space...", flush=True)
-try:
-    url = api.upload_folder(
-        folder_path="/tmp/space",
-        repo_id="Srinath-54/rag-backend",
-        repo_type="space",
-        commit_message="deploy from GitHub Actions",
-        ignore_patterns=["*.pyc", "__pycache__/", ".env", "*.db", "vector_store/", "data/"],
-    )
-    print(f"Upload complete. Commit URL: {url}", flush=True)
-except Exception as e:
-    print(f"ERROR: Upload failed: {e}", flush=True)
-    sys.exit(1)
-PYEOF
+          cd /tmp/hf-space
+          git add -A
+          git status
+          git diff --staged --stat
+          git commit -m "deploy from GitHub Actions $(date -u '+%Y-%m-%d %H:%M UTC')" || echo "Nothing new to commit"
+          git push "https://Srinath-54:${HF_TOKEN}@huggingface.co/spaces/Srinath-54/rag-backend" main
+          echo "Push complete — Space will rebuild automatically."
