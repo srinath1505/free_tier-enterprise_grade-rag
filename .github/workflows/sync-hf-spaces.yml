@@ -1,0 +1,46 @@
+name: Deploy Backend to HF Spaces
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Copy repo into a clean staging directory
+          rsync -a --exclude='.git' --exclude='.env' . /tmp/space/
+          cd /tmp/space
+
+          # Swap in the Spaces-specific Dockerfile (port 7860)
+          cp Dockerfile.spaces Dockerfile
+
+          # HF Spaces requires a README.md with YAML frontmatter at root
+          cat > README.md << 'HFEOF'
+          ---
+          title: Enterprise RAG Backend
+          emoji: 🤖
+          colorFrom: blue
+          colorTo: purple
+          sdk: docker
+          app_port: 7860
+          pinned: false
+          ---
+          HFEOF
+
+          # Force-push a clean history to the Space
+          git init
+          git config user.email "114842401+srinath1505@users.noreply.github.com"
+          git config user.name "srinath1505"
+          git add -A
+          git commit -m "deploy $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push \
+            https://srinath1505:${HF_TOKEN}@huggingface.co/spaces/srinath1505/rag-backend \
+            HEAD:main --force
