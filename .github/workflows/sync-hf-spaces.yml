@@ -51,18 +51,35 @@ HFEOF
         run: |
           python3 << 'PYEOF'
 import os
+import sys
 from huggingface_hub import HfApi
 
-token = os.environ["HF_TOKEN"]
-api   = HfApi(token=token)
+token = os.environ.get("HF_TOKEN", "")
+if not token:
+    print("ERROR: HF_TOKEN secret is empty or not set", flush=True)
+    sys.exit(1)
 
-print("Uploading to HF Space...")
-api.upload_folder(
-    folder_path="/tmp/space",
-    repo_id="Srinath-54/rag-backend",
-    repo_type="space",
-    commit_message="deploy from GitHub Actions",
-    ignore_patterns=["*.pyc", "__pycache__/", ".env", "*.db", "vector_store/", "data/"],
-)
-print("Upload complete — Space will rebuild automatically.")
+api = HfApi(token=token)
+
+# Verify token identity
+try:
+    whoami = api.whoami()
+    print(f"Authenticated as: {whoami['name']}", flush=True)
+except Exception as e:
+    print(f"ERROR: Token validation failed: {e}", flush=True)
+    sys.exit(1)
+
+print("Uploading to HF Space...", flush=True)
+try:
+    url = api.upload_folder(
+        folder_path="/tmp/space",
+        repo_id="Srinath-54/rag-backend",
+        repo_type="space",
+        commit_message="deploy from GitHub Actions",
+        ignore_patterns=["*.pyc", "__pycache__/", ".env", "*.db", "vector_store/", "data/"],
+    )
+    print(f"Upload complete. Commit URL: {url}", flush=True)
+except Exception as e:
+    print(f"ERROR: Upload failed: {e}", flush=True)
+    sys.exit(1)
 PYEOF
