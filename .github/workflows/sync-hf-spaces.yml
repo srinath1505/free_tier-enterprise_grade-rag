@@ -44,17 +44,7 @@ jobs:
           cp /tmp/hf-space/Dockerfile.spaces /tmp/hf-space/Dockerfile
 
           # Write the HF Space README with required card metadata
-          cat > /tmp/hf-space/README.md << 'HFEOF'
----
-title: Enterprise RAG Backend
-emoji: 🤖
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
----
-HFEOF
+          cp README.hf.md /tmp/hf-space/README.md
 
           echo "=== Files to deploy ==="
           ls /tmp/hf-space/
