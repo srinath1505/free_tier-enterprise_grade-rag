@@ -66,9 +66,34 @@ class QueryRequest(BaseModel):
     use_query_expansion: bool = True
 
 
-def _rerank_to_confidence(score: float) -> int:
-    """Sigmoid of reranker logit → 0-100 confidence percentage."""
-    return round(100 / (1 + math.exp(-score)))
+def _compute_confidence(
+    ranked_docs: list,
+    grounding_score: float,
+    is_grounded: bool,
+) -> int:
+    """
+    Multi-signal confidence score (0-100).
+
+    Signals:
+      - Reranker top logit  (60 %) : how relevant the best retrieved chunk is
+      - Grounding score     (35 %) : how well the answer is supported by context
+      - Source count bonus  ( 5 %) : more agreeing sources → more confident
+    A penalty is applied when the hallucination detector flags the answer.
+    """
+    if not ranked_docs:
+        return 0
+
+    top_logit   = ranked_docs[0].get("rerank_score", 0.0)
+    rerank_pct  = 100.0 / (1.0 + math.exp(-top_logit))          # sigmoid
+    ground_pct  = max(0.0, min(grounding_score, 1.0)) * 100.0    # clamp to 0-1
+    count_bonus = min(len(ranked_docs) * 2, 6)                   # +2 per source, cap at +6
+
+    raw = 0.60 * rerank_pct + 0.35 * ground_pct + count_bonus
+
+    if not is_grounded:
+        raw *= 0.75   # 25 % penalty when answer not grounded in context
+
+    return round(min(max(raw, 0), 100))
 
 
 class QueryResponse(BaseModel):
@@ -174,9 +199,7 @@ async def query_rag(
             },
         )
 
-        confidence = (
-            _rerank_to_confidence(ranked_docs[0]["rerank_score"]) if ranked_docs else 0
-        )
+        confidence = _compute_confidence(ranked_docs, score, is_grounded)
 
         # 9. Log query for analytics
         from backend.models.query_log import QueryLog

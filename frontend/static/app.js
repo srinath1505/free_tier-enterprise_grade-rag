@@ -159,7 +159,15 @@ const App = {
       <div class="app-layout">
         <nav class="sidebar">
           <div class="sidebar-header">
-            <span class="logo-icon">⚡</span>
+            <svg width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+              <rect width="36" height="36" rx="9" fill="#2563eb"/>
+              <circle cx="18" cy="9"  r="3.5" fill="white"/>
+              <circle cx="9"  cy="27" r="3.5" fill="white" opacity="0.85"/>
+              <circle cx="27" cy="27" r="3.5" fill="white" opacity="0.85"/>
+              <line x1="18"  y1="12.5" x2="10.5" y2="23.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
+              <line x1="18"  y1="12.5" x2="25.5" y2="23.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
+              <line x1="12.5" y1="27" x2="23.5" y2="27"   stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
+            </svg>
             <span class="logo-text">Enterprise RAG</span>
           </div>
           <div class="user-info">
@@ -206,6 +214,9 @@ const App = {
           <button class="btn btn-ghost logout-btn" onclick="App.logout()">
             ${icon('logout')} Sign Out
           </button>
+          <footer class="app-footer">
+            Built by <a href="https://github.com/srinath1505" target="_blank" rel="noopener">srinath1505</a>
+          </footer>
         </nav>
         <main class="main-content" id="main"></main>
       </div>`;
@@ -266,16 +277,21 @@ const App = {
       </div>`;
   },
 
-  /* ── Confidence badge ──────────────────────────────────── */
+  /* ── Confidence badge (5-tier) ─────────────────────────── */
   confidenceBadge(score) {
-    const tier   = score >= 75 ? 'success' : score >= 45 ? 'warning' : 'danger';
-    const label  = score >= 75 ? 'High'    : score >= 45 ? 'Medium'  : 'Low';
-    const filled = Math.round(score / 20);
-    const bars   = Array.from({length:5}, (_,i) =>
-      `<span class="conf-bar ${i<filled?'filled '+tier:''}"></span>`).join('');
+    // Five tiers matching backend multi-signal score
+    let color, label, filled;
+    if      (score >= 85) { color = 'success'; label = 'Excellent'; filled = 5; }
+    else if (score >= 65) { color = 'success'; label = 'High';      filled = 4; }
+    else if (score >= 45) { color = 'warning'; label = 'Medium';    filled = 3; }
+    else if (score >= 25) { color = 'orange';  label = 'Low';       filled = 2; }
+    else                  { color = 'danger';  label = 'Very Low';  filled = 1; }
+
+    const bars = Array.from({length:5}, (_,i) =>
+      `<span class="conf-bar ${i<filled ? 'filled '+color : ''}"></span>`).join('');
     return `<div class="confidence-row">
       <div class="confidence-bars">${bars}</div>
-      <span class="badge badge-${tier}">Confidence: ${score}% · ${label}</span>
+      <span class="badge badge-${color}">Confidence ${score}% · ${label}</span>
     </div>`;
   },
 
@@ -403,15 +419,39 @@ const App = {
   },
   async uploadFile(file) {
     const status = document.getElementById('upload-status');
-    status.innerHTML = '<div class="loading">Uploading and ingesting…</div>';
+    status.innerHTML = `
+      <div class="upload-progress">
+        <div class="progress-wrap"><div class="progress-bar" id="prog"></div></div>
+        <div class="progress-label" id="prog-lbl">Uploading file…</div>
+      </div>`;
+
+    const stages = [
+      { pct: 18,  label: 'Uploading file…',              ms: 300  },
+      { pct: 42,  label: 'Parsing document…',            ms: 900  },
+      { pct: 63,  label: 'Extracting text chunks…',      ms: 1600 },
+      { pct: 80,  label: 'Building vector embeddings…',  ms: 2600 },
+      { pct: 90,  label: 'Indexing into vector store…',  ms: 3400 },
+    ];
+    stages.forEach(s => setTimeout(() => {
+      const b = document.getElementById('prog');
+      const l = document.getElementById('prog-lbl');
+      if (b) b.style.width = s.pct + '%';
+      if (l) l.textContent = s.label;
+    }, s.ms));
+
     const form = new FormData(); form.append('file', file);
     try {
       const res  = await this.api('/ingest/upload', 'POST', form);
       const data = await res.json();
-      status.innerHTML = res.ok
-        ? `<div class="success-msg">✓ ${data.message}</div>`
-        : `<div class="error-msg">✗ ${data.detail || 'Upload failed'}</div>`;
-      if (res.ok) this.loadFiles();
+      const b = document.getElementById('prog');
+      if (b) b.style.width = '100%';
+      await new Promise(r => setTimeout(r, 350));
+      if (res.ok) {
+        status.innerHTML = `<div class="success-msg">✓ ${data.message || 'Document ingested successfully.'}</div>`;
+        this.loadFiles();
+      } else {
+        status.innerHTML = `<div class="error-msg">✗ ${data.detail || 'Upload failed'}</div>`;
+      }
     } catch (err) { status.innerHTML = `<div class="error-msg">✗ ${err.message}</div>`; }
   },
   async loadFiles() {

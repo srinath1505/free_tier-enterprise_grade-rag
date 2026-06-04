@@ -287,6 +287,25 @@ input::placeholder { color: var(--text-subtle); }
 .status-fail { background: rgba(239,68,68,.15); color: var(--danger); }
 
 /* ── Analytics ──────────────────────────────────────────── */
+/* ── Upload progress bar ────────────────────────────────── */
+.upload-progress { margin-top: .75rem; display: flex; flex-direction: column; gap: .4rem; }
+.progress-wrap   { height: 4px; background: var(--border-light); border-radius: 99px; overflow: hidden; }
+.progress-bar    { height: 100%; width: 0; background: var(--primary); border-radius: 99px; transition: width .55s cubic-bezier(.4,0,.2,1); }
+.progress-label  { font-size: .75rem; color: var(--text-muted); }
+
+/* ── Orange confidence tier ─────────────────────────────── */
+.badge-orange  { background: rgba(249,115,22,.15); color: #fb923c; }
+.conf-bar.filled.orange { background: #f97316; }
+
+/* ── Footer ─────────────────────────────────────────────── */
+.app-footer {
+  padding: .625rem 1rem; border-top: 1px solid var(--border);
+  font-size: .6875rem; color: var(--text-subtle); text-align: center; flex-shrink: 0;
+}
+.app-footer a { color: var(--text-muted); text-decoration: none; }
+.app-footer a:hover { color: var(--text); text-decoration: underline; }
+
+/* ── Analytics ──────────────────────────────────────────── */
 .analytics-container { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; overflow-y: auto; height: 100%; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
 .stat-card  {
