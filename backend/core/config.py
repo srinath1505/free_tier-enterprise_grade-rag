@@ -22,14 +22,18 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./users.db"
     
     # LLM Settings
-    # Supports 'local' (Ollama) or 'hf' (Hugging Face Inference API)
-    LLM_PROVIDER: str = "local" 
+    # Supports 'local' (Ollama), 'hf' (Hugging Face Inference API), 'groq'
+    LLM_PROVIDER: str = "local"
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "phi3:mini"
-    
-    # Hugging Face (Fallback)
+
+    # Hugging Face
     HF_INFERENCE_API_URL: str = "mistralai/Mistral-7B-Instruct-v0.2"
     HF_TOKEN: str = ""
+
+    # Groq (free tier — groq.com/keys)
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "gemma2-9b-it"
 
     # Retrieval Settings
     EMBEDDING_MODEL_NAME: str = "sentence-transformers/all-MiniLM-L6-v2"

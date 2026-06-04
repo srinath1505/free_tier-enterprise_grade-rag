@@ -109,7 +109,40 @@ class HuggingFaceLLM(LLMProvider):
         yield self.generate(prompt, system_prompt)
 
 
+class GroqLLM(LLMProvider):
+    def __init__(self):
+        self.api_key = settings.GROQ_API_KEY
+        self.model = settings.GROQ_MODEL
+        self.url = "https://api.groq.com/openai/v1/chat/completions"
+
+    def generate(self, prompt: str, system_prompt: str = "") -> str:
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            response = requests.post(
+                self.url,
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                json={"model": self.model, "messages": messages, "max_tokens": 512, "temperature": 0.3},
+                timeout=60,
+            )
+            response.raise_for_status()
+            return response.json()["choices"][0]["message"]["content"]
+        except requests.ConnectionError:
+            raise LLMError("Groq API is not reachable. Check your network connection.")
+        except requests.HTTPError as e:
+            raise LLMError(f"Groq API error: {e.response.status_code} {e.response.text}")
+        except requests.RequestException as e:
+            raise LLMError(f"Groq request failed: {e}")
+
+    def generate_stream(self, prompt: str, system_prompt: str = "") -> Generator[str, None, None]:
+        yield self.generate(prompt, system_prompt)
+
+
 def get_llm() -> LLMProvider:
+    if settings.LLM_PROVIDER == "groq":
+        return GroqLLM()
     if settings.LLM_PROVIDER == "hf":
         return HuggingFaceLLM()
     return OllamaLLM()
