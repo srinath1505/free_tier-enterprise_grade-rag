@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B.svg)](https://streamlit.io/)
 [![Tests](https://img.shields.io/badge/smoke%20tests-71%2F71%20%E2%80%94%20100%25-brightgreen)](test_report.md)
-[![RAGAS](https://img.shields.io/badge/RAGAS%20Overall-0.94%20%2F%201.0-brightgreen)](ragas_final_scores.json)
+[![RAGAS](https://img.shields.io/badge/RAGAS%20pilot%20eval-0.94%20avg%20%2825%20pairs%29-blue)](ragas_final_scores.json)
 [![Backend on HF Spaces](https://img.shields.io/badge/Backend-HF%20Spaces%20(free%2016GB)-FFD21E?logo=huggingface&logoColor=000)](https://huggingface.co/spaces/Srinath-54/rag-backend)
 [![Frontend on Render](https://img.shields.io/badge/Frontend-Render%20free%20tier-46E3B7?logo=render&logoColor=000)](https://render.com/deploy?repo=https://github.com/srinath1505/free_tier-enterprise_grade-rag)
 
@@ -268,42 +268,41 @@ Full details in [test_report.md](test_report.md).
 
 ## RAGAS Benchmark Results
 
-Evaluated with **[RAGAS v0.4](https://github.com/explodinggradients/ragas)** — the industry-standard RAG evaluation framework — across **25 domain Q&A pairs** covering retrieval architecture, embeddings, and security topics.
+Evaluated with **[RAGAS v0.4](https://github.com/explodinggradients/ragas)** — the industry-standard RAG evaluation framework.
 
 **Evaluator LLM:** `llama-3.1-8b-instant` (Groq) · **Embedding model:** `all-MiniLM-L6-v2`
 
-### Scores vs Industry Benchmarks
+> **Scope:** This is a **controlled pilot evaluation** — 25 Q&A pairs written against 3 purpose-built
+> sample documents. Scores reflect pipeline correctness under clean, structured input.
+> A full production benchmark (100 + pairs on real-world documents) is in progress.
 
-| Metric | This RAG | Azure AI Search RAG¹ | LangChain naive RAG² | Amazon Kendra RAG³ |
-|--------|:--------:|:-------------------:|:--------------------:|:-----------------:|
-| **Faithfulness** | **0.92** | 0.88 | 0.74 | 0.85 |
-| **Answer Relevancy** | **0.85** | 0.81 | 0.68 | 0.79 |
-| **Context Precision** | **1.00** | 0.87 | 0.71 | 0.83 |
-| **Context Recall** | **1.00** | 0.91 | 0.78 | 0.89 |
-| **Overall** | **0.94** | 0.87 | 0.73 | 0.84 |
+### Pipeline Scores — Controlled Evaluation (v2.1)
 
-> ¹ Azure AI Search + GPT-4 RAG baseline from [Microsoft RAG evaluation study (2024)](https://arxiv.org/abs/2404.16130)  
-> ² LangChain naive RAG (single-stage retrieval, no reranking) from [RAGAS public leaderboard](https://github.com/explodinggradients/ragas)  
-> ³ Amazon Kendra RAG reported scores from [AWS re:Invent 2024 RAG benchmark](https://aws.amazon.com/blogs/machine-learning/)
+| Metric | Score | What it measures |
+|--------|:-----:|-----------------|
+| **Faithfulness** | **0.92 / 1.0** | Answers contain only claims supported by retrieved context |
+| **Answer Relevancy** | **0.85 / 1.0** | Answer is semantically aligned with the question |
+| **Context Precision** | **1.00 / 1.0** | Every retrieved chunk is relevant to the question |
+| **Context Recall** | **1.00 / 1.0** | All information needed to answer was retrieved |
+| **Overall average** | **0.94 / 1.0** | |
 
 ### What drives these scores
 
-| Component | Impact |
-|-----------|--------|
-| **Hybrid retrieval** (FAISS + BM25, α=0.5) | Context Precision 1.00 — no irrelevant chunks retrieved |
-| **Cross-encoder reranking** (ms-marco-TinyBERT) | Context Recall 1.00 — all relevant information surfaced |
-| **Temperature-scaled confidence** (T=3 sigmoid) | Calibrated uncertainty, not blind 0% |
+| Component | Contribution |
+|-----------|-------------|
+| **Hybrid retrieval** (FAISS + BM25, α=0.5) | Precision 1.00 — no irrelevant chunks retrieved |
+| **Cross-encoder reranking** (ms-marco-TinyBERT) | Recall 1.00 — all relevant content surfaced |
 | **Hallucination detector** (cosine sim ≥ 0.5) | Faithfulness 0.92 — answers stay grounded |
-| **Query expansion** (multi-query dedup) | Answer Relevancy 0.85 — broader semantic coverage |
+| **Query expansion** (multi-query dedup) | Relevancy 0.85 — broader semantic coverage |
 
 ### Reproduce
 
 ```bash
 pip install ragas>=0.2.0 langchain-groq>=0.1.0
-python backend/scripts/ragas_benchmark.py --ingest
+python backend/scripts/ragas_benchmark.py --ingest   # runs the 25-pair pilot
 ```
 
-Full results in [`ragas_final_scores.json`](ragas_final_scores.json).
+Full results: [`ragas_final_scores.json`](ragas_final_scores.json)
 
 ---
 
