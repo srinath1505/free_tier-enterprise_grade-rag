@@ -1,3 +1,4 @@
+import math
 import time
 from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -65,9 +66,15 @@ class QueryRequest(BaseModel):
     use_query_expansion: bool = True
 
 
+def _rerank_to_confidence(score: float) -> int:
+    """Sigmoid of reranker logit → 0-100 confidence percentage."""
+    return round(100 / (1 + math.exp(-score)))
+
+
 class QueryResponse(BaseModel):
     answer: str
     sources: List[Dict[str, Any]]
+    confidence: int = 0
     warning: Optional[str] = None
     user: str
 
@@ -167,10 +174,23 @@ async def query_rag(
             },
         )
 
-        return QueryResponse(answer=answer, sources=ranked_docs, warning=warning, user=current_user.username)
+        confidence = (
+            _rerank_to_confidence(ranked_docs[0]["rerank_score"]) if ranked_docs else 0
+        )
 
-    except HTTPException:
-        raise
+        # 9. Log query for analytics
+        from backend.models.query_log import QueryLog
+        latency_final = (time.time() - start_time) * 1000
+        db.add(QueryLog(user=current_user.username, query=body.query, response_time_ms=latency_final, success=True))
+        await db.commit()
+
+        return QueryResponse(answer=answer, sources=ranked_docs, confidence=confidence, warning=warning, user=current_user.username)
+
+    except HTTPException as http_exc:
+        from backend.models.query_log import QueryLog
+        db.add(QueryLog(user=getattr(current_user, "username", "unknown"), query=body.query, response_time_ms=(time.time() - start_time) * 1000, success=False))
+        await db.commit()
+        raise http_exc
     except Exception as e:
         import traceback
         traceback.print_exc()

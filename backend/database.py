@@ -16,6 +16,6 @@ async def get_db():
 
 
 async def init_db():
-    from backend.models import user, conversation  # noqa: F401 — registers models with Base
+    from backend.models import user, conversation, query_log  # noqa: F401 — registers models with Base
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
