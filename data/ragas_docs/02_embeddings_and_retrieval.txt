@@ -1,0 +1,81 @@
+Embeddings, Vector Storage, and Retrieval Models
+==================================================
+
+EMBEDDING MODEL
+----------------
+The system uses all-MiniLM-L6-v2 from sentence-transformers for document encoding. This model
+produces 384-dimensional dense embedding vectors. It was trained using a contrastive learning
+objective on over one billion sentence pairs and achieves strong performance on semantic
+textual similarity benchmarks while remaining fast enough for CPU inference. Embeddings are
+L2-normalized before storage, making inner product search equivalent to cosine similarity.
+
+FAISS VECTOR INDEX
+-------------------
+FAISS (Facebook AI Similarity Search) stores and searches high-dimensional embedding vectors,
+enabling fast nearest-neighbor retrieval of the most semantically similar document chunks.
+The system uses a FAISS IndexFlatIP index, which performs exact inner product similarity search
+without approximation. IndexFlatIP was chosen over approximate indexes (like IVF or HNSW)
+because the knowledge base size in most enterprise deployments remains small enough that
+exhaustive exact search is faster and more accurate than approximate alternatives.
+
+The FAISS index is persisted to disk alongside a metadata.json file that stores the text
+content and document metadata (source filename, page number, chunk index, document type)
+for every vector in the index.
+
+BM25 SPARSE RETRIEVAL
+-----------------------
+BM25 (Best Match 25) is a probabilistic keyword ranking function used for sparse retrieval.
+It scores documents based on term frequency (TF) within the document, inverse document
+frequency (IDF) across the corpus, and document length normalization. The system uses the
+rank-bm25 library to build a BM25 index over all ingested chunks. The BM25 index is rebuilt
+in memory whenever a new document is uploaded or the index is explicitly rebuilt.
+
+HYBRID RETRIEVAL FUSION
+------------------------
+The HybridRetriever combines FAISS inner product scores and BM25 scores using linear
+interpolation controlled by the alpha parameter. FAISS scores are already normalized through
+cosine equivalence. BM25 scores are normalized by dividing by the maximum BM25 score in the
+result set to bring them into a comparable range before fusion.
+
+CROSS-ENCODER RERANKING
+------------------------
+A cross-encoder jointly encodes a query-document pair together, producing a single relevance
+score. This contrasts with a bi-encoder (used for initial retrieval), which encodes query and
+document separately for speed. Cross-encoders are more accurate but slower because they
+process every candidate pair individually.
+
+The system uses the cross-encoder/ms-marco-TinyBERT-L-2-v2 model for reranking. This is a
+lightweight cross-encoder trained on MS MARCO passage ranking data. It returns raw logits
+(not probabilities). Positive logits indicate relevant query-document pairs; negative logits
+indicate irrelevant ones. The reranker scores each candidate chunk against the user query,
+sorts results by score descending, and returns the top-k (default: top 3) chunks.
+
+HALLUCINATION DETECTION
+------------------------
+The system uses the same all-MiniLM-L6-v2 model to detect potential hallucinations. After
+the LLM generates an answer, the hallucination detector:
+1. Encodes the answer and each retrieved context chunk into embeddings.
+2. Computes cosine similarity between the answer embedding and every context embedding.
+3. Takes the maximum similarity score across all context chunks.
+4. If the maximum similarity score is below the threshold of 0.5, the answer is flagged as
+   potentially not grounded in the retrieved context, and a warning is surfaced to the user.
+
+DOCUMENT METADATA
+------------------
+Every chunk stored in the vector index carries the following metadata fields:
+- source: the original filename of the document
+- page: the page number (for PDF documents only)
+- type: the file extension category (pdf, docx, or txt)
+- content: the full text of the chunk (stored redundantly for fast retrieval without
+  a separate text store)
+- chunk_index: the sequential position of the chunk within the source document
+
+SUPPORTED FILE FORMATS
+-----------------------
+The ingestion pipeline supports three file formats:
+- PDF: text is extracted page by page using PyPDF2
+- DOCX: paragraphs are extracted using python-docx
+- TXT: plain text files are read directly with UTF-8 encoding
+
+Each loader normalizes whitespace and returns a list of page/section documents before
+chunking.

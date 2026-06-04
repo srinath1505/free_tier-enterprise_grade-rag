@@ -1,0 +1,93 @@
+Security, Administration, and System Configuration
+====================================================
+
+AUTHENTICATION
+---------------
+The system uses JSON Web Tokens (JWT) for authentication, with access tokens signed using
+the HS256 algorithm. On successful login, the server issues a JWT containing the username,
+user role, and expiry time. The token is sent in the Authorization header as a Bearer token
+on every subsequent API request. Tokens expire after a configurable period (default: 30
+minutes). The secret key used for signing is set via the SECRET_KEY environment variable.
+
+USER ROLES AND ACCESS CONTROL
+-------------------------------
+The system has two user roles:
+- admin: can upload and delete documents, trigger index rebuilds, and access the analytics
+  dashboard in addition to querying the knowledge base.
+- viewer: can only query the knowledge base; cannot access the knowledge base management
+  panel or analytics.
+
+Role is embedded in the JWT payload and verified server-side on every protected endpoint.
+The default admin account is created automatically on first startup using credentials
+specified in the environment variables ADMIN_USERNAME and ADMIN_PASSWORD.
+
+PASSWORD SECURITY
+------------------
+Passwords are hashed using PBKDF2-SHA256, a key derivation function that applies multiple
+iterations of SHA-256 hashing with a random salt. PBKDF2-SHA256 was chosen because it is
+implemented in Python's standard hashlib without binary extension dependencies, making it
+portable across operating systems including Windows. The passlib library is used with the
+pbkdf2_sha256 scheme.
+
+FILE UPLOAD RESTRICTIONS
+--------------------------
+The maximum allowed upload size is 50 MB per file. Supported file formats are PDF, DOCX,
+and TXT. Both the file extension and the MIME content-type header are validated before the
+file is written to disk. Files that fail validation are rejected before any bytes are saved.
+If ingestion fails after the file is written (e.g., due to a corrupt PDF), the file is
+automatically deleted to prevent orphaned files in the data directory.
+
+RATE LIMITING
+--------------
+The system applies rate limiting using the slowapi library, which wraps the FastAPI application
+with per-IP request throttling. The number of allowed queries and uploads per minute is
+configurable via environment variables. Rate limits protect against abuse and ensure fair
+resource usage across multiple concurrent users.
+
+INPUT SANITIZATION AND SECURITY LAYER
+---------------------------------------
+User queries are sanitized to remove potentially malicious content before processing. The
+InputSanitizer strips HTML tags, control characters, and excessive whitespace. The SecurityLayer
+then validates the sanitized query against a set of rules that detect prompt injection attempts,
+jailbreaking patterns, and requests for system prompt disclosure. Queries that violate security
+rules return a 400 Bad Request error without reaching the retrieval pipeline.
+
+DOCUMENT LIFECYCLE
+-------------------
+When a document is deleted from the knowledge base, the file is removed from the data directory
+on disk, but the corresponding vectors remain in the FAISS index until the index is explicitly
+rebuilt. The delete endpoint returns a warning advising administrators to rebuild the index to
+purge the deleted document's vectors. Rebuilding the index clears the entire FAISS index and
+re-ingests all remaining files from the data directory from scratch.
+
+CHAT HISTORY PERSISTENCE
+--------------------------
+All user queries and assistant responses are stored in an async SQLite database managed by
+SQLAlchemy with aiosqlite. Each message is stored with the user ID, session ID (equal to
+the username), role (user or assistant), content, and timestamp. Chat history is retrieved
+per-user and returned in chronological order for display in the frontend.
+
+ANALYTICS AND OBSERVABILITY
+-----------------------------
+The analytics dashboard (admin-only) displays:
+- Number of queries today
+- Total number of queries across all time
+- Average response time in milliseconds
+- Number of failed queries
+- Top questions by frequency
+- Recent query log with user, query text, response time, and success status
+
+Metrics are logged to the query_log database table on every request, including failed
+requests, with a success flag and the measured response latency.
+
+VECTOR STORE MANAGEMENT
+-------------------------
+The vector store consists of two files on disk:
+- index.faiss: the FAISS binary index file containing all embedding vectors
+- metadata.json: a JSON array where each entry corresponds to one vector in the index,
+  storing the chunk text and document metadata
+
+Chunk counts per document can be derived by counting metadata entries with a matching
+source field. The admin knowledge base panel displays the file size in kilobytes, the
+number of chunks indexed from each document, and the upload timestamp for every file
+in the knowledge base.

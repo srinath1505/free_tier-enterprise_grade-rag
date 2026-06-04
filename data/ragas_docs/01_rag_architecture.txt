@@ -1,0 +1,79 @@
+Enterprise RAG Pipeline: Architecture and Components
+=====================================================
+
+WHAT IS RAG
+-----------
+RAG stands for Retrieval Augmented Generation. It is a technique that enhances large language
+model responses by supplying relevant external documents as context at inference time. Instead
+of relying solely on knowledge encoded in model weights during training, a RAG system retrieves
+up-to-date, domain-specific information from a curated knowledge base and feeds it to the LLM
+alongside the user query. This grounds the model's response in verifiable source material and
+reduces hallucination.
+
+THE THREE MAIN COMPONENTS
+--------------------------
+The three main components of a RAG pipeline are the retriever, the reranker, and the generator
+(LLM). Each plays a distinct role:
+
+1. Retriever: Identifies candidate documents from the knowledge base that are potentially
+   relevant to the user query using a combination of dense semantic search and sparse keyword
+   matching.
+
+2. Reranker: Re-scores the retrieved candidates using a more precise but slower model, then
+   selects the top-k most relevant chunks to pass as context to the LLM.
+
+3. Generator (LLM): Receives the query and the ranked context, then produces a grounded
+   natural-language response.
+
+HYBRID SEARCH
+--------------
+Hybrid search combines dense vector similarity search with sparse keyword-based BM25 retrieval.
+The two score types are blended using an alpha parameter that controls the weighting. Alpha is
+a value between 0 and 1: a value of 0 uses only keyword BM25 search, a value of 1 uses only
+semantic vector search, and intermediate values blend both approaches proportionally. The default
+alpha is 0.5, giving equal weight to both retrieval modes.
+
+QUERY EXPANSION
+----------------
+Query expansion generates alternative phrasings of the user question using the LLM, allowing
+the retriever to find relevant documents that may not match the original query wording. When
+enabled, the system runs multiple search queries (the original plus up to two variants) and
+deduplicates the results before reranking. Query expansion improves recall at the cost of
+additional LLM inference time.
+
+CHUNKING STRATEGY
+------------------
+The system uses semantic chunking based on sentence boundaries. The SemanticChunker splits
+documents at sentence breaks detected by the spaCy NLP library. The target chunk size is
+500 characters with a 50-character overlap between consecutive chunks. This overlap preserves
+context across chunk boundaries and reduces the risk of splitting important information. Chunks
+too short to carry meaning are merged with adjacent chunks before embedding.
+
+CONFIDENCE SCORING
+-------------------
+Confidence is computed from three signals:
+- Reranker top logit (60%): the cross-encoder relevance score for the best retrieved chunk,
+  scaled through a temperature-adjusted sigmoid (T=3) that maps the logit range to [0, 100].
+- Grounding score (35%): cosine similarity between the answer embedding and the context chunk
+  embeddings, measuring how well the answer is supported by the retrieved documents.
+- Source count bonus (5%): +2 per retrieved source, capped at +6, rewarding answers backed
+  by multiple independent chunks.
+
+A 25% penalty is applied to the final score when the hallucination detector determines that
+the answer is not grounded in the retrieved context (grounding score below 0.5).
+
+LLM PROVIDERS
+--------------
+The system supports three LLM providers:
+- Ollama for local inference (default provider, model: phi3:mini)
+- Hugging Face Inference API (model: Mistral-7B-Instruct-v0.2)
+- Groq API with the Gemma2-9B-IT model
+
+The active provider is configured via the LLM_PROVIDER environment variable.
+
+MULTI-QUERY RETRIEVAL WITH DEDUPLICATION
+------------------------------------------
+When query expansion is enabled, each query variant is run through the hybrid retriever
+independently. Results are merged into a dictionary keyed by document ID to eliminate
+duplicates. The merged, deduplicated candidate set is then passed to the reranker, which
+selects the final top-3 documents for context assembly.
