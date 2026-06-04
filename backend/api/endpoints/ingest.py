@@ -1,7 +1,9 @@
 import os
+import json
 import shutil
+from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request, status
 from pydantic import BaseModel
 from backend.core.config import settings
@@ -59,18 +61,46 @@ def _validate_upload(filename: str, content_type: str, size_bytes: int) -> None:
 
 class FileInfo(BaseModel):
     filename: str
-    size: float  # KB
+    size_kb: float
+    chunk_count: Optional[int] = None
+    uploaded_at: Optional[str] = None
+
+
+def _count_chunks_by_source() -> dict:
+    """Read vector store metadata.json and count chunks per source filename."""
+    meta_path = os.path.join(settings.VECTOR_STORE_PATH, "metadata.json")
+    if not os.path.exists(meta_path):
+        return {}
+    try:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            metadata = json.load(f)
+        counts: dict = {}
+        for item in metadata:
+            src = item.get("source", "")
+            if src:
+                counts[src] = counts.get(src, 0) + 1
+        return counts
+    except Exception:
+        return {}
 
 
 @router.get("/files", response_model=List[FileInfo])
 async def list_files(current_user: dict = Depends(get_current_admin_user)):
     if not os.path.exists(DATA_DIR):
         return []
+    chunk_counts = _count_chunks_by_source()
     files = []
     for f in os.listdir(DATA_DIR):
         file_path = os.path.join(DATA_DIR, f)
         if os.path.isfile(file_path):
-            files.append(FileInfo(filename=f, size=round(os.path.getsize(file_path) / 1024, 2)))
+            size_kb = round(os.path.getsize(file_path) / 1024, 2)
+            uploaded_at = datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat()
+            files.append(FileInfo(
+                filename=f,
+                size_kb=size_kb,
+                chunk_count=chunk_counts.get(f),
+                uploaded_at=uploaded_at,
+            ))
     return files
 
 

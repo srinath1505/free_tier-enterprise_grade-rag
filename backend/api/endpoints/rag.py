@@ -84,14 +84,17 @@ def _compute_confidence(
         return 0
 
     top_logit   = ranked_docs[0].get("rerank_score", 0.0)
-    rerank_pct  = 100.0 / (1.0 + math.exp(-top_logit))          # sigmoid
-    ground_pct  = max(0.0, min(grounding_score, 1.0)) * 100.0    # clamp to 0-1
-    count_bonus = min(len(ranked_docs) * 2, 6)                   # +2 per source, cap at +6
+    # Temperature-scaled sigmoid (T=3) maps ms-marco logits to a meaningful [0,100] range.
+    # Raw sigmoid gives near-0% for any negative logit (e.g. -5 → 0.67%); T=3 gives 16%,
+    # which better reflects that a retrieved doc has some—if low—relevance.
+    rerank_pct  = 100.0 / (1.0 + math.exp(-top_logit / 3.0))
+    ground_pct  = max(0.0, min(grounding_score, 1.0)) * 100.0
+    count_bonus = min(len(ranked_docs) * 2, 6)
 
     raw = 0.60 * rerank_pct + 0.35 * ground_pct + count_bonus
 
     if not is_grounded:
-        raw *= 0.75   # 25 % penalty when answer not grounded in context
+        raw *= 0.75
 
     return round(min(max(raw, 0), 100))
 

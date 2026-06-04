@@ -159,14 +159,31 @@ const App = {
       <div class="app-layout">
         <nav class="sidebar">
           <div class="sidebar-header">
-            <svg width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
-              <rect width="36" height="36" rx="9" fill="#2563eb"/>
-              <circle cx="18" cy="9"  r="3.5" fill="white"/>
-              <circle cx="9"  cy="27" r="3.5" fill="white" opacity="0.85"/>
-              <circle cx="27" cy="27" r="3.5" fill="white" opacity="0.85"/>
-              <line x1="18"  y1="12.5" x2="10.5" y2="23.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
-              <line x1="18"  y1="12.5" x2="25.5" y2="23.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
-              <line x1="12.5" y1="27" x2="23.5" y2="27"   stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.65"/>
+            <svg width="28" height="28" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+              <defs>
+                <linearGradient id="sbg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#0c1833"/>
+                  <stop offset="100%" stop-color="#162966"/>
+                </linearGradient>
+              </defs>
+              <rect width="36" height="36" rx="8" fill="url(#sbg)"/>
+              <polygon points="18,7 27.5,12.5 27.5,23.5 18,29 8.5,23.5 8.5,12.5" fill="none" stroke="#3b82f6" stroke-width="0.9" opacity="0.45"/>
+              <line x1="18" y1="18" x2="18"   y2="7"    stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <line x1="18" y1="18" x2="27.5" y2="12.5" stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <line x1="18" y1="18" x2="27.5" y2="23.5" stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <line x1="18" y1="18" x2="18"   y2="29"   stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <line x1="18" y1="18" x2="8.5"  y2="23.5" stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <line x1="18" y1="18" x2="8.5"  y2="12.5" stroke="#60a5fa" stroke-width="0.9" opacity="0.5"/>
+              <circle cx="18"   cy="7"    r="2.5" fill="#3b82f6"/>
+              <circle cx="27.5" cy="12.5" r="2.5" fill="#3b82f6"/>
+              <circle cx="27.5" cy="23.5" r="2.5" fill="#3b82f6"/>
+              <circle cx="18"   cy="29"   r="2.5" fill="#3b82f6"/>
+              <circle cx="8.5"  cy="23.5" r="2.5" fill="#3b82f6"/>
+              <circle cx="8.5"  cy="12.5" r="2.5" fill="#3b82f6"/>
+              <circle cx="18" cy="18" r="5.5" fill="#1d4ed8" opacity="0.28"/>
+              <circle cx="18" cy="18" r="3.8" fill="#2563eb"/>
+              <circle cx="18" cy="18" r="2.2" fill="#93c5fd"/>
+              <circle cx="18" cy="18" r="1"   fill="white"/>
             </svg>
             <span class="logo-text">Enterprise RAG</span>
           </div>
@@ -277,9 +294,15 @@ const App = {
       </div>`;
   },
 
-  /* ── Confidence badge (5-tier) ─────────────────────────── */
+  /* ── Confidence badge (5-tier + no-source state) ──────── */
   confidenceBadge(score) {
-    // Five tiers matching backend multi-signal score
+    if (score === 0) {
+      const bars = Array.from({length:5}, () => `<span class="conf-bar"></span>`).join('');
+      return `<div class="confidence-row">
+        <div class="confidence-bars">${bars}</div>
+        <span class="badge badge-danger">No Sources · Unverified</span>
+      </div>`;
+    }
     let color, label, filled;
     if      (score >= 85) { color = 'success'; label = 'Excellent'; filled = 5; }
     else if (score >= 65) { color = 'success'; label = 'High';      filled = 4; }
