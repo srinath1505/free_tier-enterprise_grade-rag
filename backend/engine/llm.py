@@ -74,6 +74,11 @@ class HuggingFaceLLM(LLMProvider):
         self.client = InferenceClient(token=settings.HF_TOKEN)
         self.model = model_id
 
+    def _format_prompt(self, prompt: str, system_prompt: str = "") -> str:
+        if system_prompt:
+            return f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{prompt} [/INST]"
+        return f"<s>[INST] {prompt} [/INST]"
+
     def generate(self, prompt: str, system_prompt: str = "") -> str:
         messages = []
         if system_prompt:
@@ -87,8 +92,18 @@ class HuggingFaceLLM(LLMProvider):
                 temperature=0.3,
             )
             return response.choices[0].message.content
-        except Exception as e:
-            raise LLMError(f"Hugging Face API error: {repr(e)}")
+        except Exception:
+            # Fall back to text_generation for models that don't support chat endpoint
+            try:
+                return self.client.text_generation(
+                    self._format_prompt(prompt, system_prompt),
+                    model=self.model,
+                    max_new_tokens=512,
+                    temperature=0.3,
+                    return_full_text=False,
+                )
+            except Exception as e:
+                raise LLMError(f"Hugging Face API error: {repr(e)}")
 
     def generate_stream(self, prompt: str, system_prompt: str = "") -> Generator[str, None, None]:
         yield self.generate(prompt, system_prompt)
