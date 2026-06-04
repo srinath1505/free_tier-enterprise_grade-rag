@@ -320,15 +320,23 @@ def evaluate_ragas(
 ) -> Dict[str, Any]:
     """Run RAGAS evaluate(), handling both 0.2.x and 0.1.x APIs."""
 
-    # ── Try ragas 0.2.x ──────────────────────────────────────────────────
+    # ── Try ragas 0.2.x / 0.4.x ─────────────────────────────────────────
     try:
         from ragas import evaluate, EvaluationDataset, SingleTurnSample
-        from ragas.metrics import (
-            Faithfulness,
-            ResponseRelevancy,
-            LLMContextPrecisionWithoutReference,
-            LLMContextRecall,
-        )
+        try:
+            from ragas.metrics.collections import (
+                Faithfulness,
+                ResponseRelevancy,
+                LLMContextPrecisionWithoutReference,
+                LLMContextRecall,
+            )
+        except ImportError:
+            from ragas.metrics import (
+                Faithfulness,
+                ResponseRelevancy,
+                LLMContextPrecisionWithoutReference,
+                LLMContextRecall,
+            )
 
         samples = [
             SingleTurnSample(
