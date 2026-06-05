@@ -82,17 +82,22 @@ or entirely offline with a local LLM.
 
 ## UI Preview
 
-> Screenshots below are from the live deployment at [rag-frontend-txy6.onrender.com](https://rag-frontend-txy6.onrender.com/).
+> Screenshots from the live deployment at [rag-frontend-txy6.onrender.com](https://rag-frontend-txy6.onrender.com/).
 
-| Chat Interface | Admin — Knowledge Base |
-|:-:|:-:|
-| ![Chat interface showing a query with sources and confidence score](docs/screenshots/chat.png) | ![Admin panel showing uploaded documents and chunk counts](docs/screenshots/admin.png) |
-
-| Admin — Analytics Dashboard | Upload & Ingest |
-|:-:|:-:|
-| ![Analytics dashboard showing query metrics and latency](docs/screenshots/analytics.png) | ![Document upload panel with progress and status](docs/screenshots/upload.png) |
-
-> **To add screenshots:** Log in to the live demo or your local instance, take a screenshot of each panel, and save them to `docs/screenshots/` using the filenames above.
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Chat Interface</strong><br/>
+      <sub>Hybrid retrieval · Confidence scoring · Cited sources</sub><br/><br/>
+      <img src="docs/screenshots/chat.png" alt="NexusRAG chat interface showing a query answered with confidence score and cited sources" width="100%"/>
+    </td>
+    <td align="center" width="50%">
+      <strong>Knowledge Base — Admin Panel</strong><br/>
+      <sub>Document upload · Chunk counts · Index rebuild</sub><br/><br/>
+      <img src="docs/screenshots/admin.png" alt="Admin knowledge base panel showing uploaded documents with chunk counts and management controls" width="100%"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
