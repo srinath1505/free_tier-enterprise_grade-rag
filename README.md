@@ -1,8 +1,8 @@
 <div align="center">
 
-# NexusRAG
+<img src="docs/banner.svg" alt="NexusRAG — Private knowledge. Enterprise intelligence. Zero cost." width="100%"/>
 
-### *Private knowledge. Enterprise intelligence. Zero cost.*
+<br/>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -36,6 +36,7 @@ enterprise system while remaining fully free, fully private, and fully yours.
 ## Table of Contents
 
 - [Overview](#overview)
+- [UI Preview](#ui-preview)
 - [Architecture](#architecture)
 - [Benchmark Results](#benchmark-results)
 - [Features](#features)
@@ -76,6 +77,22 @@ or entirely offline with a local LLM.
 | **Private by default** | Documents never leave your machine unless you explicitly choose a cloud LLM |
 | **Production-grade** | Auth, RBAC, guardrails, rate limiting, observability — not bolted on, built in |
 | **Moderate hardware** | Runs on any machine with 4 GB RAM; no GPU required |
+
+---
+
+## UI Preview
+
+> Screenshots below are from the live deployment at [rag-frontend-txy6.onrender.com](https://rag-frontend-txy6.onrender.com/).
+
+| Chat Interface | Admin — Knowledge Base |
+|:-:|:-:|
+| ![Chat interface showing a query with sources and confidence score](docs/screenshots/chat.png) | ![Admin panel showing uploaded documents and chunk counts](docs/screenshots/admin.png) |
+
+| Admin — Analytics Dashboard | Upload & Ingest |
+|:-:|:-:|
+| ![Analytics dashboard showing query metrics and latency](docs/screenshots/analytics.png) | ![Document upload panel with progress and status](docs/screenshots/upload.png) |
+
+> **To add screenshots:** Log in to the live demo or your local instance, take a screenshot of each panel, and save them to `docs/screenshots/` using the filenames above.
 
 ---
 

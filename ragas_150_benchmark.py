@@ -111,7 +111,10 @@ def run_ragas(questions: list[str],
         llm=ragas_llm,
         embeddings=ragas_emb,
     )
-    return dict(result)
+    # dict(result) is broken in RAGAS 0.4.3 — use to_pandas() instead
+    df = result.to_pandas()
+    metric_cols = [c for c in ["faithfulness", "answer_relevancy"] if c in df.columns]
+    return {col: float(df[col].mean()) for col in metric_cols}
 
 
 # ---------------------------------------------------------------------------
