@@ -38,6 +38,10 @@ jobs:
             --exclude='*.db' \
             --exclude='vector_store/' \
             --exclude='data/' \
+            --exclude='docs/' \
+            --exclude='benchmark_docs/' \
+            --exclude='benchmark_vector_store/' \
+            --exclude='benchmark_results*.json' \
             . /tmp/hf-space/
 
           # Swap in the Spaces Dockerfile (port 7860)
