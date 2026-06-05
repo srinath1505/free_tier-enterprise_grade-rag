@@ -1,0 +1,2638 @@
+{
+  "metadata": {
+    "merged_at": "2026-06-05T13:15:24.451610",
+    "total_questions": 150,
+    "sources": [
+      {
+        "file": "benchmark_results_20260604_215608.json",
+        "judge_model": "llama-3.3-70b-versatile",
+        "rag_model": "llama-3.1-8b-instant",
+        "id_range": "0-90"
+      },
+      {
+        "file": "benchmark_results_20260604_222307.json",
+        "judge_model": "llama-3.1-8b-instant",
+        "rag_model": "llama-3.1-8b-instant",
+        "id_range": "91-101"
+      },
+      {
+        "file": "benchmark_results_20260605_131335.json",
+        "judge_model": "llama-3.3-70b-versatile",
+        "rag_model": "llama-3.1-8b-instant",
+        "id_range": "102-150"
+      }
+    ],
+    "reproducibility_note": "150 questions across 3 difficulty tiers (factual / reasoning / adversarial). Sources: langchain-ai/docs src/oss/ (760 MDX files, 2026-06-04 snapshot) + PostgreSQL 16 official PDF (postgresql.org/files/documentation/pdf/16/). Vector store: 36,564 chunks, sentence-transformers/all-MiniLM-L6-v2 embeddings, FAISS IndexFlatIP + BM25 hybrid retrieval, cross-encoder/ms-marco-TinyBERT-L-2-v2 reranker. RAG LLM: llama-3.1-8b-instant (Groq). Judge: llama-3.3-70b-versatile (ids 1-90, 102-150) and llama-3.1-8b-instant (ids 91-101; verified consistent with 70b on same questions)."
+  },
+  "summary": {
+    "factual": {
+      "langchain": {
+        "correct": 25,
+        "total": 25,
+        "accuracy": 1.0
+      },
+      "postgresql": {
+        "correct": 25,
+        "total": 25,
+        "accuracy": 1.0
+      },
+      "overall": {
+        "correct": 50,
+        "total": 50,
+        "accuracy": 1.0
+      }
+    },
+    "reasoning": {
+      "langchain": {
+        "avg_rubric_score": 0.12,
+        "normalized": 0.04,
+        "total": 25
+      },
+      "postgresql": {
+        "avg_rubric_score": 0.52,
+        "normalized": 0.1733,
+        "total": 25
+      },
+      "overall": {
+        "avg_rubric_score": 0.32,
+        "normalized": 0.1067,
+        "total": 50
+      }
+    },
+    "adversarial": {
+      "langchain": {
+        "correct_answers": 1,
+        "correct_refusals": 24,
+        "hallucinations": 0,
+        "total": 25,
+        "hallucination_resistance": 1.0
+      },
+      "postgresql": {
+        "correct_answers": 2,
+        "correct_refusals": 23,
+        "hallucinations": 0,
+        "total": 25,
+        "hallucination_resistance": 1.0
+      },
+      "overall": {
+        "correct_answers": 3,
+        "correct_refusals": 47,
+        "hallucinations": 0,
+        "total": 50,
+        "hallucination_resistance": 1.0
+      }
+    }
+  },
+  "individual_results": [
+    {
+      "id": 1,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the return type of the `invoke` method on a LangChain `RunnableSequence`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "going-to-production.mdx",
+        "agents.mdx",
+        "interrupts.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 2,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which class in LangChain provides a simple in-memory vector store for prototyping without external dependencies?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "knowledge-base.mdx",
+        "index.mdx",
+        "db2.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 3,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What parameter must you pass to `ChatOpenAI` to control the randomness of its outputs?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "streaming.mdx",
+        "azure_chat_openai.mdx",
+        "seekrflow.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 4,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the default chunk size used by `RecursiveCharacterTextSplitter` in LangChain?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "split_by_token.mdx",
+        "split_by_token.mdx",
+        "index.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of explicit default chunk size information."
+      }
+    },
+    {
+      "id": 5,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which method on a LangChain retriever returns a list of `Document` objects given a string query?",
+      "answer": "`invoke`",
+      "context_sources": [
+        "perplexity.mdx",
+        "perplexity.mdx",
+        "azure_openai.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nInvoke method returns a list of Document objects."
+      }
+    },
+    {
+      "id": 6,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What base class must a custom LangChain tool inherit from when defined using Python?",
+      "answer": "`@[`BaseTool`].",
+      "context_sources": [
+        "implement-langchain.mdx",
+        "configuration.mdx",
+        "implement-langchain.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurate class name provided."
+      }
+    },
+    {
+      "id": 7,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the purpose of the `StrOutputParser` in a LangChain chain?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "contextual.mdx",
+        "flyte.mdx",
+        "anthropic.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information."
+      }
+    },
+    {
+      "id": 8,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which LangChain class wraps HuggingFace pipeline models for use as LLMs?",
+      "answer": "HuggingFacePipeline",
+      "context_sources": [
+        "huggingface.mdx",
+        "huggingface_pipelines.mdx",
+        "databricks.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately identifies the class."
+      }
+    },
+    {
+      "id": 9,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What argument does `PromptTemplate.from_template()` accept as its first positional parameter?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "huggingface_pipelines.mdx",
+        "huggingface_endpoint.mdx",
+        "functional-api.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in context."
+      }
+    },
+    {
+      "id": 10,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the name of the LangChain callback that logs events to standard output for debugging purposes?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "google_bigquery.mdx",
+        "postgresql-16-docs.pdf",
+        "anthropic.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the documents."
+      }
+    },
+    {
+      "id": 11,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What does the `batch` method on a Runnable return compared to the `invoke` method?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "graph_rag.mdx",
+        "interrupts.mdx",
+        "models.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 12,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which LangChain class is used to load documents from a local directory of text files?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "index.mdx",
+        "outline.mdx",
+        "knowledge-base.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in provided context."
+      }
+    },
+    {
+      "id": 13,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the role of the `metadata` field on a LangChain `Document` object?",
+      "answer": "The `metadata` field is populated with metadata (if any) of the document from which the segments or answers were extracted.",
+      "context_sources": [
+        "google_el_carro.mdx",
+        "google_vertex_ai_search.mdx",
+        "knowledge-base.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately describes the role of the metadata field."
+      }
+    },
+    {
+      "id": 14,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which parameter in `ConversationBufferMemory` specifies the key used to store conversation history in the chain input?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "graph-api.mdx",
+        "anthropic.mdx",
+        "amazon_neptune_open_cypher.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in provided context."
+      }
+    },
+    {
+      "id": 15,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What method do you call on a FAISS vector store to persist it to disk?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "time-weighted-retriever.mdx",
+        "google_cloudsql_pg.mdx",
+        "zeusdb.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in provided context."
+      }
+    },
+    {
+      "id": 16,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the name of the LangGraph class used to define a stateful, multi-actor application as a directed graph?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "products.mdx",
+        "graph-api.mdx",
+        "overview.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of specific class name information."
+      }
+    },
+    {
+      "id": 17,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which LangChain method asynchronously streams tokens from an LLM one at a time?",
+      "answer": "`stream_mode=\"messages\"`",
+      "context_sources": [
+        "voice-agent.mdx",
+        "azure_ai.mdx",
+        "streaming.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately addresses the question."
+      }
+    },
+    {
+      "id": 18,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the default separator used by `CharacterTextSplitter` in LangChain?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "split_by_token.mdx",
+        "index.mdx",
+        "split_by_token.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of separator information in provided context."
+      }
+    },
+    {
+      "id": 19,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which class in LangChain represents a chat message sent by the human user?",
+      "answer": "HumanMessage",
+      "context_sources": [
+        "cerebras.mdx",
+        "anthropic.mdx",
+        "messages.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurate class name provided."
+      }
+    },
+    {
+      "id": 20,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What does `RunnablePassthrough` do when placed inside a LangChain expression language chain?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "permit.mdx",
+        "teradata.mdx",
+        "ollama.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of specific information about RunnablePassthrough."
+      }
+    },
+    {
+      "id": 21,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which parameter in the `OpenAIEmbeddings` class controls which OpenAI model is used for generating embeddings?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "openai.mdx",
+        "openai.mdx",
+        "openai.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 22,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the purpose of `LangChain`'s `MultiQueryRetriever`?",
+      "answer": "The integration with LangChain provides the option to use additional capabilities such as query pre-processing like `SelfQueryRetriever` or `MultiQueryRetriever`. Let's look at an example of using the [MultiQueryRetriever](https://python.langchain.com/docs/modules/data_connection/retrievers/MultiQueryRetriever).\n\nIt possibly enables creating custom chatbots, natural language interfaces, text generators, or other applications that require intricate language understanding and processing capabilities.\n\nThe purpose of `LangChain`'s `MultiQueryRetriever` is not explicitly stated in the provided context.",
+      "context_sources": [
+        "vectara.mdx",
+        "ollama.mdx",
+        "singlestore.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "INCORRECT\nLacks explicit statement of MultiQueryRetriever's purpose."
+      }
+    },
+    {
+      "id": 23,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What format does `JsonOutputParser` expect the LLM to produce in order to parse its output?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "google_generative_ai.mdx",
+        "markdown-messages.mdx",
+        "streaming.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nNo relevant information is present."
+      }
+    },
+    {
+      "id": 24,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "Which LangGraph construct is used to define the conditional routing logic between nodes in a graph?",
+      "answer": "`add_conditional_edges`",
+      "context_sources": [
+        "graph-api.mdx",
+        "use-graph-api.mdx",
+        "use-graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately identifies the LangGraph construct."
+      }
+    },
+    {
+      "id": 25,
+      "source": "langchain",
+      "difficulty": "factual",
+      "question": "What is the name of the method used to add nodes to a `StateGraph` in LangGraph?",
+      "answer": "add_node",
+      "context_sources": [
+        "use-graph-api.mdx",
+        "use-graph-api.mdx",
+        "langfuse.mdx"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurate method name provided."
+      }
+    },
+    {
+      "id": 26,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does `ConversationBufferMemory` differ from `ConversationSummaryMemory` in terms of token usage and context retention, and when would each be preferred?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "context-engineering.mdx",
+        "built-in.mdx",
+        "context-engineering.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 27,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What architectural advantages does LangChain Expression Language (LCEL) offer over manually constructing chains with legacy `LLMChain`, and what trade-offs exist?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "runpod.mdx",
+        "philosophy.mdx",
+        "philosophy.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 28,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How would you design a RAG pipeline using LangChain that combines a `MultiQueryRetriever` with a `ContextualCompressionRetriever` to improve retrieval precision?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "vectara.mdx",
+        "cohere.mdx",
+        "mongodb_atlas.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 29,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "In a LangGraph agent, how do `StateGraph` nodes, edges, and conditional edges work together to implement a dynamic tool-calling loop?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "graph-api.mdx",
+        "sql-agent.mdx",
+        "use-graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 30,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What is the difference between using `AgentExecutor` and building a custom LangGraph graph for agent workflows, and what factors should guide the choice?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "sql-agent.mdx",
+        "subagents.mdx",
+        "products.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 31,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How do LangChain callbacks differ from tracing with LangSmith, and how can they be used together for observability in production pipelines?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "observability.mdx",
+        "langfuse.mdx",
+        "observability.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 32,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "When splitting documents for retrieval, what are the trade-offs between `CharacterTextSplitter`, `RecursiveCharacterTextSplitter`, and `TokenTextSplitter`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "index.mdx",
+        "index.mdx",
+        "split_by_token.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 33,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does the `RunnableWithMessageHistory` wrapper integrate with a LCEL chain to enable stateful multi-turn conversations?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "amazon_neptune_open_cypher.mdx",
+        "amazon_neptune_open_cypher.mdx",
+        "google_generative_ai.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer question."
+      }
+    },
+    {
+      "id": 34,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What is the purpose of LangChain's `EnsembleRetriever`, and how does it combine results from multiple retrievers using Reciprocal Rank Fusion?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "google_vertex_ai_vector_search.mdx",
+        "index.mdx",
+        "elasticsearch.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 35,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How can you use LangChain's `@tool` decorator alongside `AgentExecutor` to expose a custom Python function as an agent tool?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "mcp_toolbox.mdx",
+        "sql-agent.mdx",
+        "sql-agent.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 36,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What is the difference between `similarity_search` and `max_marginal_relevance_search` on a LangChain vector store, and in what scenarios does MMR produce better results?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "google_memorystore_redis.mdx",
+        "sap_hanavector.mdx",
+        "google_memorystore_redis.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 37,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does LangGraph's `checkpointer` mechanism enable long-term memory and resumable agent execution across sessions?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "short-term-memory.mdx",
+        "memory.mdx",
+        "memory.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 38,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "Why might you choose a `SelfQueryRetriever` over a plain vector similarity search, and what components does it require to function?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "index.mdx",
+        "azure_ai.mdx",
+        "nebius.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer question."
+      }
+    },
+    {
+      "id": 39,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How can `RunnableParallel` be used within an LCEL chain to execute multiple branches simultaneously, and what is the structure of its output?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "google_bigquery.mdx",
+        "parallel_task.mdx",
+        "graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 40,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What are the considerations for choosing between FAISS and Chroma as a vector store in a LangChain application with respect to scalability, persistence, and setup complexity?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "chroma.mdx",
+        "chroma.mdx",
+        "chroma.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 41,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "In what ways does the `OpenAIFunctionsAgent` differ from the `ReAct` agent pattern in LangChain, and how does each handle tool selection?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "ionic_shopping.mdx",
+        "langchain-v1.mdx",
+        "philosophy.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 42,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How would you implement a fallback strategy in LCEL using `.with_fallbacks()` to handle LLM API failures gracefully?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "built-in.mdx",
+        "built-in.mdx",
+        "graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nJustification: Insufficient information provided."
+      }
+    },
+    {
+      "id": 43,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What role does the `MessagesPlaceholder` play in a `ChatPromptTemplate`, and why is it important for multi-turn conversation prompts?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "anthropic.mdx",
+        "INVALID_PROMPT_INPUT.mdx",
+        "anthropic.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 44,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does LangChain's `ContextualCompressionRetriever` use a document compressor to reduce irrelevant content before passing context to an LLM?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "anthropic.mdx",
+        "handoffs.mdx",
+        "context-engineering.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 45,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "When would you use `HumanMessage`, `AIMessage`, and `SystemMessage` in constructing a prompt, and how does LangChain map these to different model APIs?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "messages.mdx",
+        "unit-testing.mdx",
+        "anthropic.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 46,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does the streaming interface differ between using `.stream()` directly on a Runnable versus using a callback handler with `streaming=True` on a chat model?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "streaming.mdx",
+        "models.mdx",
+        "langchain_decorators.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 47,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What is the difference between `StructuredOutputParser` and `PydanticOutputParser` in LangChain, and when should each be used for structured output extraction?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "models.mdx",
+        "anthropic.mdx",
+        "couchbase.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 48,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How does LangGraph's `interrupt` mechanism support human-in-the-loop workflows, and what state changes occur at the interruption point?",
+      "answer": "LangGraph's `interrupt` mechanism supports human-in-the-loop workflows by saving the graph state using its persistence layer when an interrupt is triggered. The state changes occur at the interruption point, where the graph state is saved, and the execution waits indefinitely until resumed.",
+      "context_sources": [
+        "interrupts.mdx",
+        "thinking-in-langgraph.mdx",
+        "use-graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:3",
+        "score": 1.0,
+        "raw": "SCORE: 3\nAccurate and complete answer."
+      }
+    },
+    {
+      "id": 49,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "How can document loaders and text splitters be combined into a single pipeline using LangChain's `from_documents` pattern to populate a vector store?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "rag.mdx",
+        "agentic-rag.mdx",
+        "index.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 50,
+      "source": "langchain",
+      "difficulty": "reasoning",
+      "question": "What distinguishes a LangChain `Retriever` from a `VectorStore`, and why does the separation of these abstractions matter for building modular RAG systems?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "teradata.mdx",
+        "index.mdx",
+        "qdrant.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 51,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When using `RunnableWithMessageHistory` with a Redis-backed `BaseChatMessageHistory`, what is the name of the parameter passed to the session factory callable that scopes history to a specific user rather than a session?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "amazon_neptune_open_cypher.mdx",
+        "amazon_neptune_open_cypher.mdx",
+        "subagents.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 52,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LangChain's `ConversationTokenBufferMemory`, what happens when the token count of a single message exceeds the configured `max_token_limit` — does it truncate the message, drop it entirely, or raise an exception?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "add-memory.mdx",
+        "short-term-memory.mdx",
+        "add-memory.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 53,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "LangChain's `StructuredTool.from_function()` accepts an `infer_schema` parameter. What does setting it to `False` do to the tool's argument validation behavior at invocation time?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "structured-output.mdx",
+        "structured-output.mdx",
+        "ibm_watsonx.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly stated lack of information."
+      }
+    },
+    {
+      "id": 54,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "What is the name of the `BaseRetriever` subclass in LangChain that re-ranks retrieved documents using a cross-encoder model before returning them to the chain?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "cross_encoder_reranker.mdx",
+        "cross_encoder_reranker.mdx",
+        "knowledge-base.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 55,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In `LangGraph`, when a node raises a `NodeInterrupt`, what is the exact type of the object stored in the graph state at the interrupted step that allows the caller to inspect the interrupt payload?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "interrupts.mdx",
+        "langgraph-v1.mdx",
+        "interrupts.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 56,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "The `EnsembleRetriever` in LangChain weights individual retrievers' scores before applying Reciprocal Rank Fusion. What is the name of the parameter controlling per-retriever weight, and what does a weight of `0.0` cause the retriever to do?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "elasticsearch.mdx",
+        "google_cloud_vertexai_rerank.mdx",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 57,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When constructing an `OpenAIFunctionsAgent` in LangChain, what argument do you pass to bind the agent's stop sequences so it halts generation immediately after emitting a function call, rather than continuing to produce text?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "sql-agent.mdx",
+        "philosophy.mdx",
+        "google_generative_ai.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 58,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LangChain's `ParentDocumentRetriever`, what storage backend is used by default to persist the parent documents, and what method must you call to explicitly flush that store to disk?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "file_system.mdx",
+        "customization.mdx",
+        "knowledge-base.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 59,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "LangGraph's `StateGraph` supports a `reducer` function on state fields. What happens when two concurrently executing nodes both write to the same state key that has no reducer defined — does the graph merge the writes, raise an error, or use last-write-wins?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "pregel.mdx",
+        "use-graph-api.mdx",
+        "persistence.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 60,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "What is the LangChain class that implements a retriever capable of issuing structured SQL queries against a relational database based on natural language input, and which two components does it require beyond a database connection?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "nimble_extract.mdx",
+        "sql-agent.mdx",
+        "kinetica.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 61,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LCEL, when `.with_retry()` is applied to a Runnable, what is the default number of retry attempts before the exception is propagated to the caller?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "structured-output.mdx",
+        "structured-output.mdx",
+        "fault-tolerance.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 62,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "The `ChatAnthropic` integration in LangChain exposes a `thinking` parameter for extended reasoning. What is the name of the content block type returned in the response when thinking is enabled, and how does LangChain expose it in the `AIMessage`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "messages.mdx",
+        "messages.mdx",
+        "bedrock.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 63,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When using `LangGraph`'s `MemorySaver` checkpointer, what serialization format does it use internally to persist graph state between steps, and which Python standard library module does it rely on for this?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "persistence.mdx",
+        "persistence.mdx",
+        "persistence.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 64,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LangChain's `MultiVectorRetriever`, what is the relationship between the vector store and the document store, and which of the two stores is queried first during retrieval?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "knowledge-base.mdx",
+        "pgvector.mdx",
+        "index.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 65,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "What is the name of the LangChain output parser that wraps another parser and automatically prompts the LLM to correct its output when the inner parser raises an `OutputParserException`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "anthropic.mdx",
+        "anthropic.mdx",
+        "openai.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 66,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In a LangGraph `StateGraph`, what is the correct way to declare a state channel whose value is the union of all values written to it by any node, rather than replacing the previous value?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "use-graph-api.mdx",
+        "use-graph-api.mdx",
+        "graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 67,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When configuring `RunnableConfig` to propagate tracing metadata across async LangChain calls, what is the exact key in the `metadata` dict that LangSmith uses to link a child run to its parent trace?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "models.mdx",
+        "async-subagents.mdx",
+        "langfuse.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 68,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "LangChain's `FAISS.from_documents()` accepts a `distance_strategy` parameter. Which strategy must be selected if the embeddings are already L2-normalized and you want cosine similarity without re-normalizing during search?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "oci_generative_ai.mdx",
+        "elasticsearch.mdx",
+        "voyageai.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 69,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In `LangGraph`, what is the type annotation required on a state field to indicate it should accumulate a list of messages rather than replace the previous list on each node invocation?",
+      "answer": "`add_messages`",
+      "context_sources": [
+        "langfuse.mdx",
+        "use-graph-api.mdx",
+        "use-graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_answer",
+        "score": 1.0,
+        "raw": "CORRECT_ANSWER\nContext explicitly mentions \"add_messages\"."
+      }
+    },
+    {
+      "id": 70,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When building a LangChain `ConversationalRetrievalChain`, what is the name of the sub-chain responsible for condensing the follow-up question and chat history into a standalone question before retrieval?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "anthropic.mdx",
+        "nimble_search.mdx",
+        "sqlserver.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked relevant information."
+      }
+    },
+    {
+      "id": 71,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LangChain's `ChatPromptTemplate`, what exception is raised at invocation time if a required input variable referenced in a template placeholder is missing from the input dict?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "ragatouille.mdx",
+        "ibm_watsonx.mdx",
+        "INVALID_PROMPT_INPUT.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 72,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "What is the name of the LangChain integration class that connects to Weaviate and supports both dense vector search and BM25 keyword search in a single query via its hybrid search mode?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "weaviate.mdx",
+        "weaviate.mdx",
+        "weaviate.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 73,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "When using `AgentExecutor` with `handle_parsing_errors=True`, what does LangChain send back to the LLM when the agent output cannot be parsed — the raw unparsed text, a generic error string, or the exception message?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "langchain-v1.mdx",
+        "markdown-messages.mdx",
+        "voice-agent.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 74,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "What does the `step_timeout` parameter on a LangGraph `CompiledGraph` control, and what exception type is raised when a node exceeds it?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "use-graph-api.mdx",
+        "use-functional-api.mdx",
+        "use-graph-api.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 75,
+      "source": "langchain",
+      "difficulty": "adversarial",
+      "question": "In LangChain's `OpenAIEmbeddings`, what is the name of the parameter that controls chunking of large input lists into smaller batches before sending them to the embeddings API, and what is its default value?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "chroma.mdx",
+        "index.mdx",
+        "openapi.mdx"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 76,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the maximum number of columns allowed in a single PostgreSQL 16 table?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "INCORRECT\nSystem refused to answer a clearly answerable question."
+      }
+    },
+    {
+      "id": 77,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What SQL command is used to reclaim storage space and update table statistics after a large number of deletes in PostgreSQL?",
+      "answer": "VACUUM",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately addresses storage reclaim and statistics update."
+      }
+    },
+    {
+      "id": 78,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the default transaction isolation level in PostgreSQL 16?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of specific information about PostgreSQL 16."
+      }
+    },
+    {
+      "id": 79,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which PostgreSQL data type is used to store a universally unique identifier as a 128-bit value?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "pgvectorstore.mdx",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of specific data type information in the provided context."
+      }
+    },
+    {
+      "id": 80,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the maximum length of a PostgreSQL identifier (e.g., a table name or column name) in bytes by default?",
+      "answer": "The default maximum length of a PostgreSQL identifier is 63 bytes.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurate default maximum length provided."
+      }
+    },
+    {
+      "id": 81,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which index type does PostgreSQL use by default when you run `CREATE INDEX` without specifying a type?",
+      "answer": "B-tree.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nDefault index type is B-tree."
+      }
+    },
+    {
+      "id": 82,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What does the `EXPLAIN ANALYZE` command output that `EXPLAIN` alone does not?",
+      "answer": "EXPLAIN ANALYZE outputs the actual execution time and other performance metrics of the query, in addition to the query plan that EXPLAIN alone outputs.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately addresses the question."
+      }
+    },
+    {
+      "id": 83,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What PostgreSQL configuration parameter controls the amount of memory used by each sort operation before spilling to disk?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nInsufficient information in provided context."
+      }
+    },
+    {
+      "id": 84,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the purpose of the `pg_trgm` extension in PostgreSQL?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information in the provided context."
+      }
+    },
+    {
+      "id": 85,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which PostgreSQL command grants all privileges on a table to a specific role?",
+      "answer": "GRANT ALL ON table_name TO role_name;",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nMatches provided context example."
+      }
+    },
+    {
+      "id": 86,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What does MVCC stand for in the context of PostgreSQL's concurrency model?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nSystem answer is justified due to lack of explicit expansion."
+      }
+    },
+    {
+      "id": 87,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the name of the PostgreSQL system catalog view that displays currently running queries?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of relevant information."
+      }
+    },
+    {
+      "id": 88,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which PostgreSQL data type is appropriate for storing monetary values with exact decimal precision?",
+      "answer": "The numeric type is recommended for storing monetary amounts and other quantities where exactness is required.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nAccurately addresses the question."
+      }
+    },
+    {
+      "id": 89,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the maximum size of a single field value in a PostgreSQL `text` or `varchar` column?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of explicit size limit in provided context."
+      }
+    },
+    {
+      "id": 90,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What replication mode does PostgreSQL use by default: synchronous or asynchronous?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nLack of explicit default mode in provided context."
+      }
+    },
+    {
+      "id": 91,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which parameter in `postgresql.conf` sets the maximum number of concurrent connections to the database server?",
+      "answer": "max_connections",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer accurately addresses the question with the correct parameter name."
+      }
+    },
+    {
+      "id": 92,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the function of the `RETURNING` clause in a PostgreSQL `INSERT`, `UPDATE`, or `DELETE` statement?",
+      "answer": "The `RETURNING` clause in a PostgreSQL `INSERT`, `UPDATE`, or `DELETE` statement allows the return of data from modified rows while they are being manipulated, avoiding the need for an extra database query to collect the data.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\n\nThe system answer accurately summarizes the main purpose of the `RETURNING` clause."
+      }
+    },
+    {
+      "id": 93,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What PostgreSQL GIN index operator class supports full-text search on `tsvector` columns?",
+      "answer": "GIN (Generalized Inverted Index)-based index.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer accurately identifies the type of index that supports full-text search on tsvector columns."
+      }
+    },
+    {
+      "id": 94,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What does the `TABLESPACE` clause do when specified in a `CREATE INDEX` statement?",
+      "answer": "The `TABLESPACE` clause allows selection of the tablespace in which the index associated with a UNIQUE, PRIMARY KEY, or EXCLUDE constraint will be created. If not specified, default_tablespace is consulted, or temp_tablespaces if the table is temporary.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer accurately addresses the question and provides the correct information."
+      }
+    },
+    {
+      "id": 95,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which PostgreSQL role attribute allows a user to bypass all row-level security policies?",
+      "answer": "The role attribute that allows a user to bypass all row-level security policies is BYPASSRLS.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer accurately matches the provided context about bypassing row-level security policies."
+      }
+    },
+    {
+      "id": 96,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the purpose of the `BRIN` index type in PostgreSQL and what kind of data is it best suited for?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer is correct because it explicitly states lack of information to answer the question."
+      }
+    },
+    {
+      "id": 97,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What does `pg_stat_activity` show and which column indicates the current state of a connection?",
+      "answer": "`pg_stat_activity` shows information related to the current activity of a server process. The column that indicates the current state of a connection is not explicitly mentioned in the provided context.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "INCORRECT\nThe answer fails to identify the specific column that indicates the current state of a connection."
+      }
+    },
+    {
+      "id": 98,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "Which SQL keyword in PostgreSQL is used to define a common table expression (CTE)?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "INCORRECT\nThe system failed to utilize the provided context to find the relevant information."
+      }
+    },
+    {
+      "id": 99,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What is the maximum number of rows that `FETCH FIRST n ROWS ONLY` can return in a single query in PostgreSQL 16?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "INCORRECT\nThe system failed to utilize the provided context to answer the question directly."
+      }
+    },
+    {
+      "id": 100,
+      "source": "postgresql",
+      "difficulty": "factual",
+      "question": "What does the `CONCURRENTLY` option do when used with `CREATE INDEX` in PostgreSQL?",
+      "answer": "When this option is used, PostgreSQL will build the index without taking any locks that prevent concurrent inserts, updates, or deletes on the table; whereas a standard index build locks out writes (but not reads) on the table until it's done.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "CORRECT",
+        "score": 1.0,
+        "raw": "CORRECT\nThe system answer accurately describes the effect of the `CONCURRENTLY` option on `CREATE INDEX`."
+      }
+    },
+    {
+      "id": 101,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What are the trade-offs between using a GIN index and a GiST index for full-text search in PostgreSQL 16, particularly in terms of build time, query speed, and update performance?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nThe system answer is empty and refuses to answer the question."
+      }
+    },
+    {
+      "id": 102,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does PostgreSQL's MVCC mechanism avoid read-write conflicts, and what are the implications for long-running transactions in terms of table bloat and vacuum behavior?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 103,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "When designing a high-write OLTP schema, how would you choose between `SERIAL`, `BIGSERIAL`, and `IDENTITY` columns for primary keys, and what are the behavioral differences?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 104,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does the `work_mem` parameter interact with sort and hash join operations, and why can setting it too high be dangerous on a system with many concurrent connections?",
+      "answer": "The `work_mem` parameter interacts with sort and hash join operations as follows: each operation is generally allowed to use as much memory as `work_mem` specifies before it starts to write data into temporary files. \n\nSetting `work_mem` too high can be dangerous on a system with many concurrent connections because the total memory used could be many times the value of `work_mem`, which could lead to memory exhaustion.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:2",
+        "score": 0.6666666666666666,
+        "raw": "SCORE: 2\nJustification: Accurate, but lacks detail on hash operations."
+      }
+    },
+    {
+      "id": 105,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "Under what conditions will the PostgreSQL query planner prefer a sequential scan over a B-tree index scan, and how can you influence this decision without disabling the index?",
+      "answer": "The PostgreSQL query planner will prefer a sequential scan over a B-tree index scan when the entire index would have to be scanned due to constraints on b and/or c with no constraint on a. \n\nTo influence this decision without disabling the index, you can use a multicolumn GiST index for queries that have constraints on b and/or c with no constraint on a.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:2",
+        "score": 0.6666666666666666,
+        "raw": "SCORE: 2\nJustification: Mostly correct, lacks specific influencing conditions."
+      }
+    },
+    {
+      "id": 106,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How do partial indexes in PostgreSQL reduce index size and improve query performance, and what are the conditions under which the planner will use them?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer the question."
+      }
+    },
+    {
+      "id": 107,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What is the difference between `REPEATABLE READ` and `SERIALIZABLE` isolation levels in PostgreSQL 16, and how does each handle phantom reads?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer the question."
+      }
+    },
+    {
+      "id": 108,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does logical replication differ from streaming (physical) replication in PostgreSQL 16, and what use cases is each best suited for?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 109,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How can row-level security (RLS) policies be combined with role-based access control to implement multi-tenant data isolation in a shared PostgreSQL schema?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 110,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What are the trade-offs between using table partitioning and a composite B-tree index for managing large time-series datasets in PostgreSQL?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused an answerable question."
+      }
+    },
+    {
+      "id": 111,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does PostgreSQL's `autovacuum` daemon decide when to trigger a vacuum on a table, and what configuration parameters control its aggressiveness?",
+      "answer": "PostgreSQL's `autovacuum` daemon decides when to trigger a vacuum on a table based on the following configuration parameters:\n\n1. `autovacuum_vacuum_insert_threshold`: Specifies the number of inserted tuples needed to trigger a VACUUM in any one table. The default is 1000 tuples. If -1 is specified, autovacuum will not trigger a VACUUM operation on any tables based on the number of inserts.\n\nAdditionally, the aggressiveness of `autovacuum` can be controlled by other parameters, such as those mentioned in the context related to overriding global settings on a per-table basis, but the specific parameters controlling its aggressiveness are not explicitly mentioned in the provided context.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:2",
+        "score": 0.6666666666666666,
+        "raw": "SCORE: 2\nLacks specifics on aggressiveness parameters."
+      }
+    },
+    {
+      "id": 112,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "In what ways does using `JSONB` differ from using `JSON` in PostgreSQL for storage, indexing, and query performance?",
+      "answer": "Using `JSONB` differs from using `JSON` in the following ways:\n\n1. Storage: `JSONB` stores data in a decomposed binary format, whereas `JSON` stores an exact copy of the input text.\n2. Indexing: `JSONB` supports indexing, which can be a significant advantage.\n3. Query performance: `JSONB` is significantly faster than `JSON` due to the need for reparsing the text in `JSON` on each execution.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:3",
+        "score": 1.0,
+        "raw": "SCORE: 3\nAccurate and comprehensive answer."
+      }
+    },
+    {
+      "id": 113,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does the `CLUSTER` command reorganize a PostgreSQL table, and what are its limitations compared to a full table rewrite with `pg_repack`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 114,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "When implementing full-text search, how do the `to_tsvector`, `to_tsquery`, and `plainto_tsquery` functions work together, and when should you use `websearch_to_tsquery` instead?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 115,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does `EXPLAIN (ANALYZE, BUFFERS)` output help identify I/O bottlenecks in a slow query, and what do the `shared hit` and `shared read` buffer metrics mean?",
+      "answer": "The `EXPLAIN (ANALYZE, BUFFERS)` output helps identify I/O bottlenecks in a slow query by providing information about the buffer usage of each node in the execution plan. The `Buffers: shared hit` and `Buffers: shared read` metrics are used to measure the buffer usage.\n\n- `Buffers: shared hit`: This metric indicates the number of times the shared buffer pool was hit (i.e., a block was found in the buffer cache) during the execution of a node in the plan. A high `shared hit` value indicates that the query is able to reuse existing data in the buffer cache, which can improve performance.\n\n- `Buffers: shared read`: This metric is not present in the provided context, however, in a typical `EXPLAIN (ANALYZE, BUFFERS)` output, `Buffers: shared read` would indicate the number of times the shared buffer pool was read from disk to satisfy a node in the plan. A high `Buffers: shared read` value can indicate I/O bottlenecks, as it means that the query is frequently reading data from disk, which can be slow.\n\nThe `Buffers: shared hit` metric can be used to identify which parts of the query are the most I/O-intensive by looking for nodes with low `shared hit` values.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "knowledge-base.mdx"
+      ],
+      "judge": {
+        "verdict": "SCORE:2",
+        "score": 0.6666666666666666,
+        "raw": "SCORE: 2\nJustification: Mostly correct, minor gaps in explanation."
+      }
+    },
+    {
+      "id": 116,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What is the difference between `TRUNCATE` and `DELETE FROM` in PostgreSQL in terms of MVCC behavior, locking, triggers, and rollback capability?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer with provided information."
+      }
+    },
+    {
+      "id": 117,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How do covering indexes using the `INCLUDE` clause in PostgreSQL 16 allow index-only scans, and what are their limitations?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer the question."
+      }
+    },
+    {
+      "id": 118,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "Why might a foreign key constraint negatively impact write performance in PostgreSQL, and how can this be mitigated without dropping the constraint?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer a potentially answerable question."
+      }
+    },
+    {
+      "id": 119,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does the `pg_stat_statements` extension help identify slow queries, and what information does it expose that `EXPLAIN ANALYZE` alone cannot provide?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided to answer question."
+      }
+    },
+    {
+      "id": 120,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What are the behavioral differences between `INNER JOIN`, `LEFT JOIN`, and `LATERAL JOIN` in PostgreSQL, and when is a `LATERAL` join necessary?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 121,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does PostgreSQL's `shared_buffers` configuration parameter interact with the operating system's page cache, and how should you size it relative to total system RAM?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 122,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How can you use `pg_trgm` together with a GIN index to accelerate `LIKE` and `ILIKE` queries on text columns that would otherwise require a full table scan?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 123,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What is the difference between advisory locks and regular table-level locks in PostgreSQL, and in what scenarios are advisory locks more appropriate?",
+      "answer": "Advisory locks are faster, avoid table bloat, and are automatically cleaned up by the server at the end of the session. Regular table-level locks, on the other hand, can cause table bloat and require manual cleanup. Advisory locks are more appropriate in scenarios where locking strategies are an awkward fit for the MVCC model, such as emulating pessimistic locking strategies typical of \"flat file\" data management systems.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:2",
+        "score": 0.6666666666666666,
+        "raw": "SCORE: 2\nJustification: Misses difference between advisory and regular table-level locks."
+      }
+    },
+    {
+      "id": 124,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "How does `CREATE TABLE ... PARTITION BY RANGE` work in PostgreSQL 16, and what must be true about indexes and constraints on the parent table for partitioned queries to prune partitions correctly?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nInsufficient information provided."
+      }
+    },
+    {
+      "id": 125,
+      "source": "postgresql",
+      "difficulty": "reasoning",
+      "question": "What are the implications of using `NOT NULL` constraints versus `CHECK` constraints for data integrity in PostgreSQL, and how does each affect query planning?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "SCORE:0",
+        "score": 0.0,
+        "raw": "SCORE: 0\nRefused to answer question."
+      }
+    },
+    {
+      "id": 126,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, when a GIN index is created on a `tsvector` column with the `fastupdate` option enabled, what is the name of the pending list structure that buffers new entries, and what GUC parameter controls its maximum size before it is flushed?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 127,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "PostgreSQL 16 supports `MERGE` with multiple `WHEN MATCHED` clauses. What happens when two `WHEN MATCHED` clauses both match the same target row — does PostgreSQL execute both, the first, or raise an error?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "configuration.mdx",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 128,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When using `pg_logical` for logical decoding in PostgreSQL 16, what is the name of the output plugin shipped with the core distribution that formats WAL changes as SQL statements?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 129,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16's planner, what is the name of the cost model parameter that controls the assumed ratio of random to sequential I/O cost, and how does lowering it below its default value affect index scan preference on SSDs?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 130,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "What is the exact behavior of `VACUUM FULL` on a partitioned table in PostgreSQL 16 — does it lock and rewrite each partition independently, rewrite the parent table first, or refuse to run on partitioned tables entirely?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information, correctly refused answer."
+      }
+    },
+    {
+      "id": 131,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In a PostgreSQL 16 logical replication setup, can a subscriber table have additional columns not present on the publisher, and if so, what constraint governs which column positions are acceptable?",
+      "answer": "Yes, a subscriber table can have additional columns not present on the publisher. \n\nThe order of columns in the subscriber table does not need to match that of the publisher.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_answer",
+        "score": 1.0,
+        "raw": "CORRECT_ANSWER\nContext explicitly states the order doesn't need to match."
+      }
+    },
+    {
+      "id": 132,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When `row_security` is enabled on a table and the querying role has the `BYPASSRLS` attribute, PostgreSQL skips RLS evaluation. What happens when that same role runs `SET ROLE` to switch to a role without `BYPASSRLS` — are RLS policies then enforced for subsequent queries in that session?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 133,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "PostgreSQL 16 introduced `pg_stat_io`. What is the name of the column in that view that distinguishes I/O performed during a checkpoint from I/O performed during normal query execution, and which `backend_type` value corresponds to the checkpointer process?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 134,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When a `BRIN` index is created with `pages_per_range = 1` on a heap table in PostgreSQL 16, does the resulting index behave identically to a B-tree index for equality lookups, or does the BRIN access method still require a heap scan after consulting the index?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 135,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, what is the name of the background worker process responsible for applying WAL records on a physical standby, and what system view exposes its current replay LSN?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information, correctly declined answer."
+      }
+    },
+    {
+      "id": 136,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "What happens in PostgreSQL 16 when you run `CREATE INDEX CONCURRENTLY` inside an explicit transaction block — does it proceed normally, complete after the transaction commits, or immediately raise an error?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 137,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, the `pg_hba.conf` authentication method `scram-sha-256` supersedes `md5`. Under what specific condition does a client that supports only `md5` successfully authenticate against a server configured for `scram-sha-256`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 138,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When a PostgreSQL 16 table has both a `BEFORE ROW` trigger and a `BEFORE STATEMENT` trigger defined for `UPDATE`, in what order do they fire, and can the `BEFORE ROW` trigger access the values set by the `BEFORE STATEMENT` trigger?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 139,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "PostgreSQL 16's `COPY` command supports a `WHERE` clause for filtering rows during import. What is the name of the format option that must be used alongside `WHERE` for binary-format `COPY FROM` to accept per-row filtering?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly stated it lacked enough information."
+      }
+    },
+    {
+      "id": 140,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, when `idle_in_transaction_session_timeout` terminates a session, what state does the terminated connection leave its in-progress transaction in — committed, rolled back, or indeterminate until the next checkpoint?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 141,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "What is the behavior of a `DEFERRABLE INITIALLY IMMEDIATE` foreign key constraint in PostgreSQL 16 when it is explicitly deferred within a transaction using `SET CONSTRAINTS ALL DEFERRED` — does it defer normally, remain immediate, or raise an error because it was declared `INITIALLY IMMEDIATE`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly refused due to lack of information."
+      }
+    },
+    {
+      "id": 142,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, what is the name of the GiST operator class that enables `KNN` (k-nearest-neighbor) searches on `point` columns using the `<->` distance operator?",
+      "answer": "quad_point_ops",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_answer",
+        "score": 1.0,
+        "raw": "CORRECT_ANSWER\nSystem correctly identified quad_point_ops."
+      }
+    },
+    {
+      "id": 143,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When `max_parallel_workers_per_gather` is set to 4 in PostgreSQL 16 and a parallel sequential scan is initiated, what is the total number of processes involved in the scan, including the leader process?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 144,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, what does specifying `INCLUDE (col)` on a B-tree index do when `col` is already part of the index key — does it raise an error, silently ignore the duplication, or store a second copy of the column in leaf pages?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 145,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "What is the name of the PostgreSQL 16 catalog table that stores the transition table names used by `AFTER` statement-level triggers defined with `REFERENCING OLD TABLE AS` or `REFERENCING NEW TABLE AS`?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information, correctly declined answer."
+      }
+    },
+    {
+      "id": 146,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, when a CTE is declared with `WITH ... AS MATERIALIZED`, does the query planner still inline it into the outer query if it is referenced exactly once, or does `MATERIALIZED` unconditionally force a separate evaluation?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem lacked information to answer."
+      }
+    },
+    {
+      "id": 147,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "What happens to an active `LISTEN`/`NOTIFY` subscription in PostgreSQL 16 when the notifying session's transaction is rolled back after calling `NOTIFY` — is the notification still delivered to listeners?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nSystem correctly declined due to lack of information."
+      }
+    },
+    {
+      "id": 148,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, what is the name of the configuration parameter that controls whether the planner generates parallel query plans for `CREATE TABLE AS SELECT` and `CREATE MATERIALIZED VIEW` operations?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nContext lacks specific configuration parameter information."
+      }
+    },
+    {
+      "id": 149,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "When `pg_upgrade` is run between PostgreSQL 15 and 16, what is the exact handling of system catalog tables that changed their internal OID layout — are they rebuilt from scratch, copied verbatim, or selectively migrated based on a mapping file?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nContext lacks specific handling details."
+      }
+    },
+    {
+      "id": 150,
+      "source": "postgresql",
+      "difficulty": "adversarial",
+      "question": "In PostgreSQL 16, what is the documented limit on the number of range partitions that can be attached to a single partitioned table before the partition pruning algorithm degrades from O(log n) to O(n) complexity?",
+      "answer": "I don't have enough information in the provided documents to answer this question.",
+      "context_sources": [
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf",
+        "postgresql-16-docs.pdf"
+      ],
+      "judge": {
+        "verdict": "correct_refusal",
+        "score": 1.0,
+        "raw": "CORRECT_REFUSAL\nContext lacks specific information on partition limit."
+      }
+    }
+  ]
+}

@@ -1,0 +1,902 @@
+[
+  {
+    "id": 1,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the return type of the `invoke` method on a LangChain `RunnableSequence`?"
+  },
+  {
+    "id": 2,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which class in LangChain provides a simple in-memory vector store for prototyping without external dependencies?"
+  },
+  {
+    "id": 3,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What parameter must you pass to `ChatOpenAI` to control the randomness of its outputs?"
+  },
+  {
+    "id": 4,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the default chunk size used by `RecursiveCharacterTextSplitter` in LangChain?"
+  },
+  {
+    "id": 5,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which method on a LangChain retriever returns a list of `Document` objects given a string query?"
+  },
+  {
+    "id": 6,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What base class must a custom LangChain tool inherit from when defined using Python?"
+  },
+  {
+    "id": 7,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the purpose of the `StrOutputParser` in a LangChain chain?"
+  },
+  {
+    "id": 8,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which LangChain class wraps HuggingFace pipeline models for use as LLMs?"
+  },
+  {
+    "id": 9,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What argument does `PromptTemplate.from_template()` accept as its first positional parameter?"
+  },
+  {
+    "id": 10,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the name of the LangChain callback that logs events to standard output for debugging purposes?"
+  },
+  {
+    "id": 11,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What does the `batch` method on a Runnable return compared to the `invoke` method?"
+  },
+  {
+    "id": 12,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which LangChain class is used to load documents from a local directory of text files?"
+  },
+  {
+    "id": 13,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the role of the `metadata` field on a LangChain `Document` object?"
+  },
+  {
+    "id": 14,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which parameter in `ConversationBufferMemory` specifies the key used to store conversation history in the chain input?"
+  },
+  {
+    "id": 15,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What method do you call on a FAISS vector store to persist it to disk?"
+  },
+  {
+    "id": 16,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the name of the LangGraph class used to define a stateful, multi-actor application as a directed graph?"
+  },
+  {
+    "id": 17,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which LangChain method asynchronously streams tokens from an LLM one at a time?"
+  },
+  {
+    "id": 18,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the default separator used by `CharacterTextSplitter` in LangChain?"
+  },
+  {
+    "id": 19,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which class in LangChain represents a chat message sent by the human user?"
+  },
+  {
+    "id": 20,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What does `RunnablePassthrough` do when placed inside a LangChain expression language chain?"
+  },
+  {
+    "id": 21,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which parameter in the `OpenAIEmbeddings` class controls which OpenAI model is used for generating embeddings?"
+  },
+  {
+    "id": 22,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the purpose of `LangChain`'s `MultiQueryRetriever`?"
+  },
+  {
+    "id": 23,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What format does `JsonOutputParser` expect the LLM to produce in order to parse its output?"
+  },
+  {
+    "id": 24,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "Which LangGraph construct is used to define the conditional routing logic between nodes in a graph?"
+  },
+  {
+    "id": 25,
+    "source": "langchain",
+    "difficulty": "factual",
+    "question": "What is the name of the method used to add nodes to a `StateGraph` in LangGraph?"
+  },
+  {
+    "id": 26,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does `ConversationBufferMemory` differ from `ConversationSummaryMemory` in terms of token usage and context retention, and when would each be preferred?"
+  },
+  {
+    "id": 27,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What architectural advantages does LangChain Expression Language (LCEL) offer over manually constructing chains with legacy `LLMChain`, and what trade-offs exist?"
+  },
+  {
+    "id": 28,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How would you design a RAG pipeline using LangChain that combines a `MultiQueryRetriever` with a `ContextualCompressionRetriever` to improve retrieval precision?"
+  },
+  {
+    "id": 29,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "In a LangGraph agent, how do `StateGraph` nodes, edges, and conditional edges work together to implement a dynamic tool-calling loop?"
+  },
+  {
+    "id": 30,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What is the difference between using `AgentExecutor` and building a custom LangGraph graph for agent workflows, and what factors should guide the choice?"
+  },
+  {
+    "id": 31,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How do LangChain callbacks differ from tracing with LangSmith, and how can they be used together for observability in production pipelines?"
+  },
+  {
+    "id": 32,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "When splitting documents for retrieval, what are the trade-offs between `CharacterTextSplitter`, `RecursiveCharacterTextSplitter`, and `TokenTextSplitter`?"
+  },
+  {
+    "id": 33,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does the `RunnableWithMessageHistory` wrapper integrate with a LCEL chain to enable stateful multi-turn conversations?"
+  },
+  {
+    "id": 34,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What is the purpose of LangChain's `EnsembleRetriever`, and how does it combine results from multiple retrievers using Reciprocal Rank Fusion?"
+  },
+  {
+    "id": 35,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How can you use LangChain's `@tool` decorator alongside `AgentExecutor` to expose a custom Python function as an agent tool?"
+  },
+  {
+    "id": 36,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What is the difference between `similarity_search` and `max_marginal_relevance_search` on a LangChain vector store, and in what scenarios does MMR produce better results?"
+  },
+  {
+    "id": 37,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does LangGraph's `checkpointer` mechanism enable long-term memory and resumable agent execution across sessions?"
+  },
+  {
+    "id": 38,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "Why might you choose a `SelfQueryRetriever` over a plain vector similarity search, and what components does it require to function?"
+  },
+  {
+    "id": 39,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How can `RunnableParallel` be used within an LCEL chain to execute multiple branches simultaneously, and what is the structure of its output?"
+  },
+  {
+    "id": 40,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What are the considerations for choosing between FAISS and Chroma as a vector store in a LangChain application with respect to scalability, persistence, and setup complexity?"
+  },
+  {
+    "id": 41,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "In what ways does the `OpenAIFunctionsAgent` differ from the `ReAct` agent pattern in LangChain, and how does each handle tool selection?"
+  },
+  {
+    "id": 42,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How would you implement a fallback strategy in LCEL using `.with_fallbacks()` to handle LLM API failures gracefully?"
+  },
+  {
+    "id": 43,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What role does the `MessagesPlaceholder` play in a `ChatPromptTemplate`, and why is it important for multi-turn conversation prompts?"
+  },
+  {
+    "id": 44,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does LangChain's `ContextualCompressionRetriever` use a document compressor to reduce irrelevant content before passing context to an LLM?"
+  },
+  {
+    "id": 45,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "When would you use `HumanMessage`, `AIMessage`, and `SystemMessage` in constructing a prompt, and how does LangChain map these to different model APIs?"
+  },
+  {
+    "id": 46,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does the streaming interface differ between using `.stream()` directly on a Runnable versus using a callback handler with `streaming=True` on a chat model?"
+  },
+  {
+    "id": 47,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What is the difference between `StructuredOutputParser` and `PydanticOutputParser` in LangChain, and when should each be used for structured output extraction?"
+  },
+  {
+    "id": 48,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How does LangGraph's `interrupt` mechanism support human-in-the-loop workflows, and what state changes occur at the interruption point?"
+  },
+  {
+    "id": 49,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "How can document loaders and text splitters be combined into a single pipeline using LangChain's `from_documents` pattern to populate a vector store?"
+  },
+  {
+    "id": 50,
+    "source": "langchain",
+    "difficulty": "reasoning",
+    "question": "What distinguishes a LangChain `Retriever` from a `VectorStore`, and why does the separation of these abstractions matter for building modular RAG systems?"
+  },
+  {
+    "id": 51,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When using `RunnableWithMessageHistory` with a Redis-backed `BaseChatMessageHistory`, what is the name of the parameter passed to the session factory callable that scopes history to a specific user rather than a session?"
+  },
+  {
+    "id": 52,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LangChain's `ConversationTokenBufferMemory`, what happens when the token count of a single message exceeds the configured `max_token_limit` \u2014 does it truncate the message, drop it entirely, or raise an exception?"
+  },
+  {
+    "id": 53,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "LangChain's `StructuredTool.from_function()` accepts an `infer_schema` parameter. What does setting it to `False` do to the tool's argument validation behavior at invocation time?"
+  },
+  {
+    "id": 54,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "What is the name of the `BaseRetriever` subclass in LangChain that re-ranks retrieved documents using a cross-encoder model before returning them to the chain?"
+  },
+  {
+    "id": 55,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In `LangGraph`, when a node raises a `NodeInterrupt`, what is the exact type of the object stored in the graph state at the interrupted step that allows the caller to inspect the interrupt payload?"
+  },
+  {
+    "id": 56,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "The `EnsembleRetriever` in LangChain weights individual retrievers' scores before applying Reciprocal Rank Fusion. What is the name of the parameter controlling per-retriever weight, and what does a weight of `0.0` cause the retriever to do?"
+  },
+  {
+    "id": 57,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When constructing an `OpenAIFunctionsAgent` in LangChain, what argument do you pass to bind the agent's stop sequences so it halts generation immediately after emitting a function call, rather than continuing to produce text?"
+  },
+  {
+    "id": 58,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LangChain's `ParentDocumentRetriever`, what storage backend is used by default to persist the parent documents, and what method must you call to explicitly flush that store to disk?"
+  },
+  {
+    "id": 59,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "LangGraph's `StateGraph` supports a `reducer` function on state fields. What happens when two concurrently executing nodes both write to the same state key that has no reducer defined \u2014 does the graph merge the writes, raise an error, or use last-write-wins?"
+  },
+  {
+    "id": 60,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "What is the LangChain class that implements a retriever capable of issuing structured SQL queries against a relational database based on natural language input, and which two components does it require beyond a database connection?"
+  },
+  {
+    "id": 61,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LCEL, when `.with_retry()` is applied to a Runnable, what is the default number of retry attempts before the exception is propagated to the caller?"
+  },
+  {
+    "id": 62,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "The `ChatAnthropic` integration in LangChain exposes a `thinking` parameter for extended reasoning. What is the name of the content block type returned in the response when thinking is enabled, and how does LangChain expose it in the `AIMessage`?"
+  },
+  {
+    "id": 63,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When using `LangGraph`'s `MemorySaver` checkpointer, what serialization format does it use internally to persist graph state between steps, and which Python standard library module does it rely on for this?"
+  },
+  {
+    "id": 64,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LangChain's `MultiVectorRetriever`, what is the relationship between the vector store and the document store, and which of the two stores is queried first during retrieval?"
+  },
+  {
+    "id": 65,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "What is the name of the LangChain output parser that wraps another parser and automatically prompts the LLM to correct its output when the inner parser raises an `OutputParserException`?"
+  },
+  {
+    "id": 66,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In a LangGraph `StateGraph`, what is the correct way to declare a state channel whose value is the union of all values written to it by any node, rather than replacing the previous value?"
+  },
+  {
+    "id": 67,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When configuring `RunnableConfig` to propagate tracing metadata across async LangChain calls, what is the exact key in the `metadata` dict that LangSmith uses to link a child run to its parent trace?"
+  },
+  {
+    "id": 68,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "LangChain's `FAISS.from_documents()` accepts a `distance_strategy` parameter. Which strategy must be selected if the embeddings are already L2-normalized and you want cosine similarity without re-normalizing during search?"
+  },
+  {
+    "id": 69,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In `LangGraph`, what is the type annotation required on a state field to indicate it should accumulate a list of messages rather than replace the previous list on each node invocation?"
+  },
+  {
+    "id": 70,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When building a LangChain `ConversationalRetrievalChain`, what is the name of the sub-chain responsible for condensing the follow-up question and chat history into a standalone question before retrieval?"
+  },
+  {
+    "id": 71,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LangChain's `ChatPromptTemplate`, what exception is raised at invocation time if a required input variable referenced in a template placeholder is missing from the input dict?"
+  },
+  {
+    "id": 72,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "What is the name of the LangChain integration class that connects to Weaviate and supports both dense vector search and BM25 keyword search in a single query via its hybrid search mode?"
+  },
+  {
+    "id": 73,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "When using `AgentExecutor` with `handle_parsing_errors=True`, what does LangChain send back to the LLM when the agent output cannot be parsed \u2014 the raw unparsed text, a generic error string, or the exception message?"
+  },
+  {
+    "id": 74,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "What does the `step_timeout` parameter on a LangGraph `CompiledGraph` control, and what exception type is raised when a node exceeds it?"
+  },
+  {
+    "id": 75,
+    "source": "langchain",
+    "difficulty": "adversarial",
+    "question": "In LangChain's `OpenAIEmbeddings`, what is the name of the parameter that controls chunking of large input lists into smaller batches before sending them to the embeddings API, and what is its default value?"
+  },
+  {
+    "id": 76,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the maximum number of columns allowed in a single PostgreSQL 16 table?"
+  },
+  {
+    "id": 77,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What SQL command is used to reclaim storage space and update table statistics after a large number of deletes in PostgreSQL?"
+  },
+  {
+    "id": 78,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the default transaction isolation level in PostgreSQL 16?"
+  },
+  {
+    "id": 79,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which PostgreSQL data type is used to store a universally unique identifier as a 128-bit value?"
+  },
+  {
+    "id": 80,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the maximum length of a PostgreSQL identifier (e.g., a table name or column name) in bytes by default?"
+  },
+  {
+    "id": 81,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which index type does PostgreSQL use by default when you run `CREATE INDEX` without specifying a type?"
+  },
+  {
+    "id": 82,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What does the `EXPLAIN ANALYZE` command output that `EXPLAIN` alone does not?"
+  },
+  {
+    "id": 83,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What PostgreSQL configuration parameter controls the amount of memory used by each sort operation before spilling to disk?"
+  },
+  {
+    "id": 84,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the purpose of the `pg_trgm` extension in PostgreSQL?"
+  },
+  {
+    "id": 85,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which PostgreSQL command grants all privileges on a table to a specific role?"
+  },
+  {
+    "id": 86,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What does MVCC stand for in the context of PostgreSQL's concurrency model?"
+  },
+  {
+    "id": 87,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the name of the PostgreSQL system catalog view that displays currently running queries?"
+  },
+  {
+    "id": 88,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which PostgreSQL data type is appropriate for storing monetary values with exact decimal precision?"
+  },
+  {
+    "id": 89,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the maximum size of a single field value in a PostgreSQL `text` or `varchar` column?"
+  },
+  {
+    "id": 90,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What replication mode does PostgreSQL use by default: synchronous or asynchronous?"
+  },
+  {
+    "id": 91,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which parameter in `postgresql.conf` sets the maximum number of concurrent connections to the database server?"
+  },
+  {
+    "id": 92,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the function of the `RETURNING` clause in a PostgreSQL `INSERT`, `UPDATE`, or `DELETE` statement?"
+  },
+  {
+    "id": 93,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What PostgreSQL GIN index operator class supports full-text search on `tsvector` columns?"
+  },
+  {
+    "id": 94,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What does the `TABLESPACE` clause do when specified in a `CREATE INDEX` statement?"
+  },
+  {
+    "id": 95,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which PostgreSQL role attribute allows a user to bypass all row-level security policies?"
+  },
+  {
+    "id": 96,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the purpose of the `BRIN` index type in PostgreSQL and what kind of data is it best suited for?"
+  },
+  {
+    "id": 97,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What does `pg_stat_activity` show and which column indicates the current state of a connection?"
+  },
+  {
+    "id": 98,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "Which SQL keyword in PostgreSQL is used to define a common table expression (CTE)?"
+  },
+  {
+    "id": 99,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What is the maximum number of rows that `FETCH FIRST n ROWS ONLY` can return in a single query in PostgreSQL 16?"
+  },
+  {
+    "id": 100,
+    "source": "postgresql",
+    "difficulty": "factual",
+    "question": "What does the `CONCURRENTLY` option do when used with `CREATE INDEX` in PostgreSQL?"
+  },
+  {
+    "id": 101,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What are the trade-offs between using a GIN index and a GiST index for full-text search in PostgreSQL 16, particularly in terms of build time, query speed, and update performance?"
+  },
+  {
+    "id": 102,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does PostgreSQL's MVCC mechanism avoid read-write conflicts, and what are the implications for long-running transactions in terms of table bloat and vacuum behavior?"
+  },
+  {
+    "id": 103,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "When designing a high-write OLTP schema, how would you choose between `SERIAL`, `BIGSERIAL`, and `IDENTITY` columns for primary keys, and what are the behavioral differences?"
+  },
+  {
+    "id": 104,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does the `work_mem` parameter interact with sort and hash join operations, and why can setting it too high be dangerous on a system with many concurrent connections?"
+  },
+  {
+    "id": 105,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "Under what conditions will the PostgreSQL query planner prefer a sequential scan over a B-tree index scan, and how can you influence this decision without disabling the index?"
+  },
+  {
+    "id": 106,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How do partial indexes in PostgreSQL reduce index size and improve query performance, and what are the conditions under which the planner will use them?"
+  },
+  {
+    "id": 107,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What is the difference between `REPEATABLE READ` and `SERIALIZABLE` isolation levels in PostgreSQL 16, and how does each handle phantom reads?"
+  },
+  {
+    "id": 108,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does logical replication differ from streaming (physical) replication in PostgreSQL 16, and what use cases is each best suited for?"
+  },
+  {
+    "id": 109,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How can row-level security (RLS) policies be combined with role-based access control to implement multi-tenant data isolation in a shared PostgreSQL schema?"
+  },
+  {
+    "id": 110,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What are the trade-offs between using table partitioning and a composite B-tree index for managing large time-series datasets in PostgreSQL?"
+  },
+  {
+    "id": 111,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does PostgreSQL's `autovacuum` daemon decide when to trigger a vacuum on a table, and what configuration parameters control its aggressiveness?"
+  },
+  {
+    "id": 112,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "In what ways does using `JSONB` differ from using `JSON` in PostgreSQL for storage, indexing, and query performance?"
+  },
+  {
+    "id": 113,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does the `CLUSTER` command reorganize a PostgreSQL table, and what are its limitations compared to a full table rewrite with `pg_repack`?"
+  },
+  {
+    "id": 114,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "When implementing full-text search, how do the `to_tsvector`, `to_tsquery`, and `plainto_tsquery` functions work together, and when should you use `websearch_to_tsquery` instead?"
+  },
+  {
+    "id": 115,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does `EXPLAIN (ANALYZE, BUFFERS)` output help identify I/O bottlenecks in a slow query, and what do the `shared hit` and `shared read` buffer metrics mean?"
+  },
+  {
+    "id": 116,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What is the difference between `TRUNCATE` and `DELETE FROM` in PostgreSQL in terms of MVCC behavior, locking, triggers, and rollback capability?"
+  },
+  {
+    "id": 117,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How do covering indexes using the `INCLUDE` clause in PostgreSQL 16 allow index-only scans, and what are their limitations?"
+  },
+  {
+    "id": 118,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "Why might a foreign key constraint negatively impact write performance in PostgreSQL, and how can this be mitigated without dropping the constraint?"
+  },
+  {
+    "id": 119,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does the `pg_stat_statements` extension help identify slow queries, and what information does it expose that `EXPLAIN ANALYZE` alone cannot provide?"
+  },
+  {
+    "id": 120,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What are the behavioral differences between `INNER JOIN`, `LEFT JOIN`, and `LATERAL JOIN` in PostgreSQL, and when is a `LATERAL` join necessary?"
+  },
+  {
+    "id": 121,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does PostgreSQL's `shared_buffers` configuration parameter interact with the operating system's page cache, and how should you size it relative to total system RAM?"
+  },
+  {
+    "id": 122,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How can you use `pg_trgm` together with a GIN index to accelerate `LIKE` and `ILIKE` queries on text columns that would otherwise require a full table scan?"
+  },
+  {
+    "id": 123,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What is the difference between advisory locks and regular table-level locks in PostgreSQL, and in what scenarios are advisory locks more appropriate?"
+  },
+  {
+    "id": 124,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "How does `CREATE TABLE ... PARTITION BY RANGE` work in PostgreSQL 16, and what must be true about indexes and constraints on the parent table for partitioned queries to prune partitions correctly?"
+  },
+  {
+    "id": 125,
+    "source": "postgresql",
+    "difficulty": "reasoning",
+    "question": "What are the implications of using `NOT NULL` constraints versus `CHECK` constraints for data integrity in PostgreSQL, and how does each affect query planning?"
+  },
+  {
+    "id": 126,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, when a GIN index is created on a `tsvector` column with the `fastupdate` option enabled, what is the name of the pending list structure that buffers new entries, and what GUC parameter controls its maximum size before it is flushed?"
+  },
+  {
+    "id": 127,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "PostgreSQL 16 supports `MERGE` with multiple `WHEN MATCHED` clauses. What happens when two `WHEN MATCHED` clauses both match the same target row \u2014 does PostgreSQL execute both, the first, or raise an error?"
+  },
+  {
+    "id": 128,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When using `pg_logical` for logical decoding in PostgreSQL 16, what is the name of the output plugin shipped with the core distribution that formats WAL changes as SQL statements?"
+  },
+  {
+    "id": 129,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16's planner, what is the name of the cost model parameter that controls the assumed ratio of random to sequential I/O cost, and how does lowering it below its default value affect index scan preference on SSDs?"
+  },
+  {
+    "id": 130,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "What is the exact behavior of `VACUUM FULL` on a partitioned table in PostgreSQL 16 \u2014 does it lock and rewrite each partition independently, rewrite the parent table first, or refuse to run on partitioned tables entirely?"
+  },
+  {
+    "id": 131,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In a PostgreSQL 16 logical replication setup, can a subscriber table have additional columns not present on the publisher, and if so, what constraint governs which column positions are acceptable?"
+  },
+  {
+    "id": 132,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When `row_security` is enabled on a table and the querying role has the `BYPASSRLS` attribute, PostgreSQL skips RLS evaluation. What happens when that same role runs `SET ROLE` to switch to a role without `BYPASSRLS` \u2014 are RLS policies then enforced for subsequent queries in that session?"
+  },
+  {
+    "id": 133,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "PostgreSQL 16 introduced `pg_stat_io`. What is the name of the column in that view that distinguishes I/O performed during a checkpoint from I/O performed during normal query execution, and which `backend_type` value corresponds to the checkpointer process?"
+  },
+  {
+    "id": 134,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When a `BRIN` index is created with `pages_per_range = 1` on a heap table in PostgreSQL 16, does the resulting index behave identically to a B-tree index for equality lookups, or does the BRIN access method still require a heap scan after consulting the index?"
+  },
+  {
+    "id": 135,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, what is the name of the background worker process responsible for applying WAL records on a physical standby, and what system view exposes its current replay LSN?"
+  },
+  {
+    "id": 136,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "What happens in PostgreSQL 16 when you run `CREATE INDEX CONCURRENTLY` inside an explicit transaction block \u2014 does it proceed normally, complete after the transaction commits, or immediately raise an error?"
+  },
+  {
+    "id": 137,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, the `pg_hba.conf` authentication method `scram-sha-256` supersedes `md5`. Under what specific condition does a client that supports only `md5` successfully authenticate against a server configured for `scram-sha-256`?"
+  },
+  {
+    "id": 138,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When a PostgreSQL 16 table has both a `BEFORE ROW` trigger and a `BEFORE STATEMENT` trigger defined for `UPDATE`, in what order do they fire, and can the `BEFORE ROW` trigger access the values set by the `BEFORE STATEMENT` trigger?"
+  },
+  {
+    "id": 139,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "PostgreSQL 16's `COPY` command supports a `WHERE` clause for filtering rows during import. What is the name of the format option that must be used alongside `WHERE` for binary-format `COPY FROM` to accept per-row filtering?"
+  },
+  {
+    "id": 140,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, when `idle_in_transaction_session_timeout` terminates a session, what state does the terminated connection leave its in-progress transaction in \u2014 committed, rolled back, or indeterminate until the next checkpoint?"
+  },
+  {
+    "id": 141,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "What is the behavior of a `DEFERRABLE INITIALLY IMMEDIATE` foreign key constraint in PostgreSQL 16 when it is explicitly deferred within a transaction using `SET CONSTRAINTS ALL DEFERRED` \u2014 does it defer normally, remain immediate, or raise an error because it was declared `INITIALLY IMMEDIATE`?"
+  },
+  {
+    "id": 142,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, what is the name of the GiST operator class that enables `KNN` (k-nearest-neighbor) searches on `point` columns using the `<->` distance operator?"
+  },
+  {
+    "id": 143,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When `max_parallel_workers_per_gather` is set to 4 in PostgreSQL 16 and a parallel sequential scan is initiated, what is the total number of processes involved in the scan, including the leader process?"
+  },
+  {
+    "id": 144,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, what does specifying `INCLUDE (col)` on a B-tree index do when `col` is already part of the index key \u2014 does it raise an error, silently ignore the duplication, or store a second copy of the column in leaf pages?"
+  },
+  {
+    "id": 145,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "What is the name of the PostgreSQL 16 catalog table that stores the transition table names used by `AFTER` statement-level triggers defined with `REFERENCING OLD TABLE AS` or `REFERENCING NEW TABLE AS`?"
+  },
+  {
+    "id": 146,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, when a CTE is declared with `WITH ... AS MATERIALIZED`, does the query planner still inline it into the outer query if it is referenced exactly once, or does `MATERIALIZED` unconditionally force a separate evaluation?"
+  },
+  {
+    "id": 147,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "What happens to an active `LISTEN`/`NOTIFY` subscription in PostgreSQL 16 when the notifying session's transaction is rolled back after calling `NOTIFY` \u2014 is the notification still delivered to listeners?"
+  },
+  {
+    "id": 148,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, what is the name of the configuration parameter that controls whether the planner generates parallel query plans for `CREATE TABLE AS SELECT` and `CREATE MATERIALIZED VIEW` operations?"
+  },
+  {
+    "id": 149,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "When `pg_upgrade` is run between PostgreSQL 15 and 16, what is the exact handling of system catalog tables that changed their internal OID layout \u2014 are they rebuilt from scratch, copied verbatim, or selectively migrated based on a mapping file?"
+  },
+  {
+    "id": 150,
+    "source": "postgresql",
+    "difficulty": "adversarial",
+    "question": "In PostgreSQL 16, what is the documented limit on the number of range partitions that can be attached to a single partitioned table before the partition pruning algorithm degrades from O(log n) to O(n) complexity?"
+  }
+]

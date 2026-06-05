@@ -1,4 +1,6 @@
 services:
+
+  # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     build:
       context: .
@@ -7,40 +9,71 @@ services:
     ports:
       - "8000:8000"
     environment:
+      # ── LLM provider (local | hf | groq) ─────────────────────────────────────
       - LLM_PROVIDER=${LLM_PROVIDER:-local}
-      # For Ollama running on the host machine, use host.docker.internal (Mac/Windows)
-      # On Linux: replace with your host IP or run Ollama in a separate container
+
+      # Ollama — Mac/Windows: host.docker.internal  |  Linux: your host IP
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-phi3:mini}
+
+      # Hugging Face Inference API
       - HF_TOKEN=${HF_TOKEN:-}
       - HF_INFERENCE_API_URL=${HF_INFERENCE_API_URL:-mistralai/Mistral-7B-Instruct-v0.2}
-      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
-      # DB lives in a named volume so users survive container restarts
+
+      # Groq
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-gemma2-9b-it}
+
+      # ── Security ──────────────────────────────────────────────────────────────
+      - SECRET_KEY=${SECRET_KEY:-change-me-before-deploying}
+      - ADMIN_DEFAULT_PASSWORD=${ADMIN_DEFAULT_PASSWORD:-password}
+
+      # ── Database (named volume — survives container restarts) ─────────────────
       - DATABASE_URL=sqlite+aiosqlite:////app/db/users.db
+
+      # ── Retrieval ─────────────────────────────────────────────────────────────
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-sentence-transformers/all-MiniLM-L6-v2}
+      - RERANKER_MODEL_NAME=${RERANKER_MODEL_NAME:-cross-encoder/ms-marco-TinyBERT-L-2-v2}
+      - TOP_K_RETRIEVAL=${TOP_K_RETRIEVAL:-5}
+
+      # ── Rate limits ───────────────────────────────────────────────────────────
+      - RATE_LIMIT_AUTH_PER_MIN=${RATE_LIMIT_AUTH_PER_MIN:-20}
+      - RATE_LIMIT_QUERY_PER_MIN=${RATE_LIMIT_QUERY_PER_MIN:-20}
+      - RATE_LIMIT_UPLOAD_PER_MIN=${RATE_LIMIT_UPLOAD_PER_MIN:-10}
+
+      # ── Upload cap ────────────────────────────────────────────────────────────
+      - MAX_UPLOAD_SIZE_MB=${MAX_UPLOAD_SIZE_MB:-50}
+
+      # ── Logging ───────────────────────────────────────────────────────────────
+      - LOG_FILE_DIR=${LOG_FILE_DIR:-}
     volumes:
-      - ./vector_store:/app/vector_store   # FAISS index
+      - ./vector_store:/app/vector_store   # FAISS index — persists between restarts
       - ./data:/app/data                   # uploaded documents
-      - rag_db:/app/db                     # SQLite user DB
+      - rag_db:/app/db                     # SQLite user + chat DB
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  # Vanilla JS SPA served by a lightweight FastAPI static server (server.py).
+  # Proxies /api/config to tell the browser where the backend lives.
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+      context: .
+      dockerfile: Dockerfile.frontend
     ports:
-      - "8501:8501"
+      - "8080:8080"
     environment:
-      # Points to the backend service by its Docker Compose service name
-      - BACKEND_URL=http://backend:8000/api/v1
+      # Points to the backend service by its Docker Compose service name.
+      # server.py appends /api/v1 automatically if not already present.
+      - BACKEND_URL=http://backend:8000
+      - PORT=8080
     depends_on:
       backend:
         condition: service_healthy
 
 volumes:
-  rag_db:   # Named volume keeps users.db across docker compose down / up
+  rag_db:   # Named volume — keeps users.db and chat history across docker compose down/up

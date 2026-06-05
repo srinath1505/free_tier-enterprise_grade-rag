@@ -10,9 +10,27 @@ class SemanticChunker:
             from spacy.cli import download
             download(model_name)
             self.nlp = spacy.load(model_name)
-            
+
+        # NER/tagger/parser are disabled during chunking so memory pressure is
+        # minimal — raise the limit to handle large PDFs and long MDX files.
+        self.nlp.max_length = 10_000_000
+        self._spacy_batch = 900_000   # split texts larger than this before nlp()
+
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
+
+    def _sentences_from_text(self, text: str) -> List[str]:
+        """Run spaCy sentence segmentation, splitting oversized texts into fixed batches."""
+        if len(text) <= self._spacy_batch:
+            doc = self.nlp(text, disable=["ner", "tagger", "lemmatizer"])
+            return [s.text.strip() for s in doc.sents if s.text.strip()]
+
+        sentences: List[str] = []
+        for start in range(0, len(text), self._spacy_batch):
+            batch = text[start:start + self._spacy_batch]
+            doc = self.nlp(batch, disable=["ner", "tagger", "lemmatizer"])
+            sentences.extend(s.text.strip() for s in doc.sents if s.text.strip())
+        return sentences
 
     def chunk(self, documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
@@ -20,14 +38,12 @@ class SemanticChunker:
         Uses spaCy sentence segmentation.
         """
         chunked_docs = []
-        
+
         for doc in documents:
             text = doc.get('content', '')
             base_metadata = doc.get('metadata', {})
             
-            # Disable unneeded pipeline components for speed
-            doc_spacy = self.nlp(text, disable=["ner", "tagger", "lemmatizer"])
-            sentences = [sent.text.strip() for sent in doc_spacy.sents]
+            sentences = self._sentences_from_text(text)
             
             current_chunk = []
             current_length = 0

@@ -12,3 +12,10 @@ users.db
 *.log
 users.json
 HANDOFF.md
+
+# Benchmark — large generated artifacts (reproduce locally via README instructions)
+benchmark_docs/
+benchmark_vector_store/
+benchmark_results_2026*.json
+ragas_pipeline_output.json
+test_task4.py
