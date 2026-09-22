@@ -6,8 +6,10 @@ from pathlib import Path
 from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request, status
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 from backend.core.config import settings
 from backend.core.limiter import limiter
+from backend.database import get_db
 from backend.security.auth import get_current_admin_user
 from ingestion.ingest import ingest_data_directory
 from ingestion.loaders.pdf import PDFLoader
@@ -167,12 +169,17 @@ async def delete_file(filename: str, current_user: dict = Depends(get_current_ad
 
 
 @router.post("/rebuild")
-async def rebuild_index(current_user: dict = Depends(get_current_admin_user)):
+async def rebuild_index(
+    current_user: dict = Depends(get_current_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     if os.path.exists(settings.VECTOR_STORE_PATH):
         shutil.rmtree(settings.VECTOR_STORE_PATH)
         os.makedirs(settings.VECTOR_STORE_PATH)
     ingest_data_directory(DATA_DIR)
     # Reload the in-process singletons so queries immediately reflect the new index
-    from backend.api.endpoints.rag import get_retriever
+    from backend.api.endpoints.rag import get_retriever, get_semantic_cache, get_vector_store
     get_retriever().reload()
+    # Cached answers may cite content that no longer exists post-rebuild
+    await get_semantic_cache(get_vector_store()).clear(db)
     return {"message": "Index rebuilt successfully"}

@@ -106,7 +106,24 @@ class HuggingFaceLLM(LLMProvider):
                 raise LLMError(f"Hugging Face API error: {repr(e)}")
 
     def generate_stream(self, prompt: str, system_prompt: str = "") -> Generator[str, None, None]:
-        yield self.generate(prompt, system_prompt)
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            stream = self.client.chat_completion(
+                messages=messages,
+                model=self.model,
+                max_tokens=512,
+                temperature=0.3,
+                stream=True,
+            )
+            for chunk in stream:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    yield delta
+        except Exception as e:
+            raise LLMError(f"Hugging Face streaming error: {repr(e)}")
 
 
 class GroqLLM(LLMProvider):
@@ -137,7 +154,44 @@ class GroqLLM(LLMProvider):
             raise LLMError(f"Groq request failed: {e}")
 
     def generate_stream(self, prompt: str, system_prompt: str = "") -> Generator[str, None, None]:
-        yield self.generate(prompt, system_prompt)
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            response = requests.post(
+                self.url,
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": self.model, "messages": messages,
+                    "max_tokens": 512, "temperature": 0.3, "stream": True,
+                },
+                timeout=60,
+                stream=True,
+            )
+            response.raise_for_status()
+            for line in response.iter_lines():
+                if not line:
+                    continue
+                decoded = line.decode("utf-8") if isinstance(line, bytes) else line
+                if not decoded.startswith("data: "):
+                    continue
+                payload = decoded[len("data: "):]
+                if payload.strip() == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(payload)
+                except json.JSONDecodeError:
+                    continue
+                delta = chunk.get("choices", [{}])[0].get("delta", {}).get("content")
+                if delta:
+                    yield delta
+        except requests.ConnectionError:
+            raise LLMError("Groq API is not reachable. Check your network connection.")
+        except requests.HTTPError as e:
+            raise LLMError(f"Groq API error: {e.response.status_code} {e.response.text}")
+        except requests.RequestException as e:
+            raise LLMError(f"Groq streaming error: {e}")
 
 
 def get_llm() -> LLMProvider:

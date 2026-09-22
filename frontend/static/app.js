@@ -287,6 +287,7 @@ const App = {
         <div class="message-avatar">${isUser ? (this.username?.[0]||'U').toUpperCase() : '⚡'}</div>
         <div class="message-body">
           <div class="message-content">${body}</div>
+          ${m.cached ? `<div class="badge badge-blue cache-badge">⚡ Instant reply — served from cache</div>` : ''}
           ${m.confidence !== undefined ? this.confidenceBadge(m.confidence) : ''}
           ${m.warning ? `<div class="warning-msg">⚠️ ${this.esc(m.warning)}</div>` : ''}
           ${m.sources  ? this.sourcesHTML(m.sources) : ''}
@@ -377,22 +378,71 @@ const App = {
       </div>`);
     if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
 
+    let answerText = '';
     try {
-      const res  = await this.api('/rag/query', 'POST', {
-        query, top_k: this.settings.topK,
-        alpha: this.settings.alpha, use_query_expansion: this.settings.useExpansion,
+      const res = await fetch(`${this.backendUrl}/rag/query/stream`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query, top_k: this.settings.topK,
+          alpha: this.settings.alpha, use_query_expansion: this.settings.useExpansion,
+        }),
       });
-      const data = await res.json();
-      document.getElementById(tid)?.remove();
 
-      const aMsg = res.ok
-        ? { role:'assistant', content: data.answer, confidence: data.confidence, sources: data.sources, warning: data.warning }
-        : { role:'assistant', content: `Error ${res.status}: ${data.detail || res.statusText}` };
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || `Error ${res.status}`);
+      }
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let finalMeta = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) !== -1) {
+          const frame = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+
+          let eventName = 'message';
+          let dataLine  = null;
+          for (const line of frame.split('\n')) {
+            if (line.startsWith('event: ')) eventName = line.slice(7).trim();
+            else if (line.startsWith('data: ')) dataLine = line.slice(6);
+          }
+          if (dataLine === null) continue;
+
+          if (eventName === 'token') {
+            answerText += JSON.parse(dataLine);
+            const contentEl = document.getElementById(tid)?.querySelector('.message-content');
+            if (contentEl) {
+              contentEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(answerText) : this.esc(answerText);
+            }
+            if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+          } else if (eventName === 'done') {
+            finalMeta = JSON.parse(dataLine);
+          } else if (eventName === 'error') {
+            throw new Error(JSON.parse(dataLine));
+          }
+        }
+      }
+
+      document.getElementById(tid)?.remove();
+      const aMsg = {
+        role: 'assistant', content: answerText,
+        confidence: finalMeta?.confidence, sources: finalMeta?.sources,
+        warning: finalMeta?.warning, cached: finalMeta?.cached,
+      };
       this.messages.push(aMsg);
       msgsEl?.insertAdjacentHTML('beforeend', this.msgHTML(aMsg));
     } catch (err) {
       document.getElementById(tid)?.remove();
-      const aMsg = { role:'assistant', content: `Connection error: ${err.message}` };
+      const aMsg = { role:'assistant', content: answerText || `Connection error: ${err.message}` };
       this.messages.push(aMsg);
       msgsEl?.insertAdjacentHTML('beforeend', this.msgHTML(aMsg));
     }

@@ -97,6 +97,18 @@ or entirely offline with a local LLM.
       <img src="docs/screenshots/admin.png" alt="Admin knowledge base panel showing uploaded documents with chunk counts and management controls" width="100%"/>
     </td>
   </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Live Token Streaming</strong><br/>
+      <sub>Server-Sent Events · Answers render as they generate</sub><br/><br/>
+      <img src="docs/screenshots/streaming.png" alt="Chat interface showing an answer streaming in token-by-token" width="100%"/>
+    </td>
+    <td align="center" width="50%">
+      <strong>Semantic Query Cache</strong><br/>
+      <sub>Near-identical questions skip the LLM entirely</sub><br/><br/>
+      <img src="docs/screenshots/cache_hit.png" alt="Cache hit badge showing an instant cached reply with confidence and grounding score preserved" width="100%"/>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -279,6 +291,12 @@ Full scores: [`ragas_final_scores.json`](ragas_final_scores.json)
 - **Cross-encoder reranking** — `ms-marco-TinyBERT-L-2` re-scores top candidates for precision
 - **Hallucination grounding check** — cosine similarity between answer and retrieved context; flags or warns when below threshold
 - **Confidence scoring** — 0–100 score combining reranker logit, grounding score, and source count
+
+### Memory & Performance
+- **Live token streaming** — Server-Sent Events endpoint (`/rag/query/stream`) renders answers as they generate instead of blocking on the full response
+- **Short-term memory (MAG)** — follow-up questions ("what about its performance?") get rewritten into standalone queries using recent conversation turns before retrieval
+- **Long-term memory (MAG)** — durable per-user facts/preferences extracted from conversations and injected into future prompts; inspectable and deletable via `/memory`
+- **Semantic query cache** — near-identical questions are served from a per-user embedding-similarity cache, skipping retrieval/rerank/generation entirely; invalidated automatically on index rebuild
 
 ### Document Processing
 - **PDF** — pdfplumber text + table extraction (as markdown); image captioning via Groq vision (opt-in)
@@ -571,9 +589,10 @@ All endpoints are prefixed with `/api/v1`. Interactive docs at
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|:----:|-------------|
-| `POST` | `/rag/query` | JWT | Hybrid retrieve → rerank → LLM → grounded answer |
+| `POST` | `/rag/query` | JWT | Hybrid retrieve → rerank → LLM → grounded answer (JSON) |
+| `POST` | `/rag/query/stream` | JWT | Same pipeline, streamed as Server-Sent Events (`token` frames, then a final `done` frame with sources/confidence/warning/cache status) |
 
-Request body:
+Request body (both endpoints):
 ```json
 {
   "query": "string",
@@ -583,7 +602,7 @@ Request body:
 }
 ```
 
-Response:
+`/rag/query` response:
 ```json
 {
   "answer": "string",
@@ -593,6 +612,13 @@ Response:
 }
 ```
 
+### Memory (MAG)
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:----:|-------------|
+| `GET` | `/memory` | JWT | List durable facts/preferences remembered about the current user |
+| `DELETE` | `/memory/{id}` | JWT | Delete one remembered fact |
+
 ### Knowledge Base (admin only)
 
 | Method | Endpoint | Auth | Description |
@@ -600,7 +626,7 @@ Response:
 | `POST` | `/ingest/upload` | Admin JWT | Upload PDF / DOCX / TXT → chunk → embed → index |
 | `GET` | `/ingest/files` | Admin JWT | List indexed files with chunk counts |
 | `DELETE` | `/ingest/files/{filename}` | Admin JWT | Remove a file from the knowledge base |
-| `POST` | `/ingest/rebuild` | Admin JWT | Wipe and re-ingest all files from scratch |
+| `POST` | `/ingest/rebuild` | Admin JWT | Wipe and re-ingest all files from scratch (also clears the semantic query cache) |
 
 ### History & Analytics
 
@@ -653,8 +679,10 @@ Full test report: [`test_report.md`](test_report.md)
 | DOCX table + image extraction | ✅ Done |
 | 150-question LLM-as-judge benchmark | ✅ Done |
 | Hallucination resistance metric | ✅ Done |
+| Streaming responses (SSE) | ✅ Done |
+| Per-user conversational memory (MAG) | ✅ Done |
+| Semantic query cache | ✅ Done |
 | Multi-tenancy (per-user document isolation) | 🔄 Planned |
-| Streaming responses | 🔄 Planned |
 | Demo GIF / video walkthrough | 🔄 Planned |
 
 ---
